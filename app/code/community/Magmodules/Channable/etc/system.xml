@@ -1,0 +1,714 @@
+<?xml version="1.0"?>
+<!--
+  ~ Magmodules.eu - http://www.magmodules.eu
+  ~
+  ~ NOTICE OF LICENSE
+  ~ This source file is subject to the Open Software License (OSL 3.0)
+  ~ that is bundled with this package in the file LICENSE.txt.
+  ~ It is also available through the world-wide-web at this URL:
+  ~ http://opensource.org/licenses/osl-3.0.php
+  ~ If you did not receive a copy of the license and are unable to
+  ~ obtain it through the world-wide-web, please send an email
+  ~ to info@magmodules.eu so we can send you a copy immediately.
+  ~
+  ~ @category      Magmodules
+  ~ @package       Magmodules_Channable
+  ~ @author        Magmodules <info@magmodules.eu)
+  ~ @copyright     Copyright (c) 2017 (http://www.magmodules.eu)
+  ~ @license       http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+  ~
+  -->
+<config>
+    <tabs>
+        <magmodules translate="label" module="channable">
+            <label>Magmodules</label>
+            <sort_order>200</sort_order>
+        </magmodules>
+    </tabs>
+    <sections>
+        <channable translate="label" module="channable">
+            <label>Channable Feed</label>
+            <tab>magmodules</tab>
+            <frontend_type>text</frontend_type>
+            <sort_order>103</sort_order>
+            <show_in_default>1</show_in_default>
+            <show_in_website>1</show_in_website>
+            <show_in_store>1</show_in_store>
+            <groups>
+                <info>
+                    <frontend_model>channable/adminhtml_widget_info_info</frontend_model>
+                    <sort_order>1</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                </info>
+                <connect translate="label" module="channable">
+                    <label>General - Settings</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>3</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <expanded>1</expanded>
+                    <fields>
+                        <version translate="label">
+                            <label>Extension Version</label>
+                            <frontend_type>text</frontend_type>
+                            <frontend_model>channable/adminhtml_system_config_form_field_version</frontend_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </version>
+                        <token_encrypted translate="label">
+                            <label>Connect Token</label>
+                            <frontend_type>text</frontend_type>
+                            <frontend_model>channable/adminhtml_system_config_form_field_token</frontend_model>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </token_encrypted>
+                        <connect_heading translate="label">
+                            <label>Feed settings</label>
+                            <frontend_model>channable/adminhtml_system_config_form_field_heading</frontend_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </connect_heading>
+                        <enabled translate="label">
+                            <label>Enabled Feed</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>11</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </enabled>
+                        <max_products translate="label">
+                            <label>Products per page</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>13</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Limits the amount of product Channable will import per run. This setting wil not limit the total products sent to Channable!</comment>
+                        </max_products>
+                    </fields>
+                </connect>
+                <data translate="label" module="channable">
+                    <label>Products - Data</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>4</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <expanded>1</expanded>
+                    <fields>
+                        <note translate="label">
+                            <label><![CDATA[In this section you will see listed all of the standard attributes needed for the Channable Connect. In order to prevent some errors please fill in as many attributes as you can, this will also improve the usability of your data on the Channable platform.]]></label>
+                            <frontend_model>channable/adminhtml_system_config_form_field_note</frontend_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </note>
+                        <heading_general translate="label">
+                            <label>The General Fields</label>
+                            <frontend_model>channable/adminhtml_system_config_form_field_heading</frontend_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </heading_general>
+                        <name translate="label">
+                            <label>Name</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>channable/adminhtml_system_config_source_name</source_model>
+                            <sort_order>11</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </name>
+                        <description translate="label">
+                            <label>Description</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>channable/adminhtml_system_config_source_attribute</source_model>
+                            <sort_order>12</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </description>
+                        <brand translate="label">
+                            <label>Brand</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>channable/adminhtml_system_config_source_attribute</source_model>
+                            <sort_order>13</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </brand>
+                        <ean translate="label">
+                            <label>EAN-code</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>channable/adminhtml_system_config_source_attribute</source_model>
+                            <sort_order>14</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </ean>
+                        <heading_images translate="label">
+                            <label>Images</label>
+                            <frontend_model>channable/adminhtml_system_config_form_field_heading</frontend_model>
+                            <sort_order>15</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </heading_images>
+                        <images translate="label">
+                            <label>Images</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>channable/adminhtml_system_config_source_images</source_model>
+                            <sort_order>16</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </images>
+                        <default_image translate="label">
+                            <label>Default Image</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>channable/adminhtml_system_config_source_mainimage</source_model>
+                            <sort_order>17</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <images>all</images>
+                            </depends>
+                        </default_image>
+                        <heading_additional translate="label">
+                            <label>The Additional Fields</label>
+                            <frontend_model>channable/adminhtml_system_config_form_field_heading</frontend_model>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </heading_additional>
+                        <sku translate="label">
+                            <label>SKU</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>channable/adminhtml_system_config_source_attribute</source_model>
+                            <sort_order>21</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </sku>
+                        <size translate="label">
+                            <label>Size</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>channable/adminhtml_system_config_source_attribute</source_model>
+                            <sort_order>22</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </size>
+                        <color translate="label">
+                            <label>Color</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>channable/adminhtml_system_config_source_attribute</source_model>
+                            <sort_order>23</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </color>
+                        <material translate="label">
+                            <label>Material</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>channable/adminhtml_system_config_source_attribute</source_model>
+                            <sort_order>24</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </material>
+                        <gender translate="label">
+                            <label>Gender</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>channable/adminhtml_system_config_source_attribute</source_model>
+                            <sort_order>25</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </gender>
+                        <heading_stock translate="label">
+                            <label>Stock</label>
+                            <frontend_model>channable/adminhtml_system_config_form_field_heading</frontend_model>
+                            <sort_order>30</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </heading_stock>
+                        <stock translate="label">
+                            <label>Send Stock Level</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>32</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </stock>
+                        <heading_delivery_nl translate="label">
+                            <label>Delivery Time for The Netherlands</label>
+                            <frontend_model>channable/adminhtml_system_config_form_field_heading</frontend_model>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </heading_delivery_nl>
+                        <delivery translate="label">
+                            <label>Config</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>channable/adminhtml_system_config_source_type</source_model>
+                            <sort_order>41</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </delivery>
+                        <delivery_att translate="label">
+                            <label>Attribute</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>channable/adminhtml_system_config_source_attribute</source_model>
+                            <sort_order>42</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <delivery>attribute</delivery>
+                            </depends>
+                        </delivery_att>
+                        <delivery_in translate="label">
+                            <label>Delivery Time for In Stock</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>43</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <delivery>fixed</delivery>
+                            </depends>
+                        </delivery_in>
+                        <delivery_out translate="label">
+                            <label>Delivery Time for Out of Stock</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>44</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <delivery>fixed</delivery>
+                            </depends>
+                        </delivery_out>
+                        <heading_delivery_be translate="label">
+                            <label>Delivery Time for Belgium</label>
+                            <frontend_model>channable/adminhtml_system_config_form_field_heading</frontend_model>
+                            <sort_order>45</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </heading_delivery_be>
+                        <delivery_be translate="label">
+                            <label>Config</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>channable/adminhtml_system_config_source_type</source_model>
+                            <sort_order>46</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </delivery_be>
+                        <delivery_att_be translate="label">
+                            <label>Attribute</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>channable/adminhtml_system_config_source_attribute</source_model>
+                            <sort_order>47</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <delivery_be>attribute</delivery_be>
+                            </depends>
+                        </delivery_att_be>
+                        <delivery_in_be translate="label">
+                            <label>Delivery Time - In Stock</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>48</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <delivery_be>fixed</delivery_be>
+                            </depends>
+                        </delivery_in_be>
+                        <delivery_out_be translate="label">
+                            <label>Delivery Time - Out of Stock</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>49</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <delivery_be>fixed</delivery_be>
+                            </depends>
+                        </delivery_out_be>
+                        <weight_heading translate="label">
+                            <label>Weight</label>
+                            <frontend_model>channable/adminhtml_system_config_form_field_heading</frontend_model>
+                            <sort_order>70</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </weight_heading>
+                        <weight translate="label">
+                            <label>Include the Weight Field</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>71</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </weight>
+                        <weight_units translate="label">
+                            <label>The Weight Units</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>channable/adminhtml_system_config_source_weight</source_model>
+                            <sort_order>72</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <weight>1</weight>
+                            </depends>
+                        </weight_units>
+                        <price_heading translate="label">
+                            <label>Price Customization</label>
+                            <frontend_model>channable/adminhtml_system_config_form_field_heading</frontend_model>
+                            <sort_order>80</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </price_heading>
+                        <force_tax translate="label">
+                            <label>Force the Tax Usage</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>channable/adminhtml_system_config_source_tax</source_model>
+                            <sort_order>82</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </force_tax>
+                        <add_tax translate="label">
+                            <label>Manually Add the Tax</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>83</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </add_tax>
+                        <tax_percentage translate="label">
+                            <label>Percentage</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>84</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment><![CDATA[When the tax percentage is 21% use 21.]]></comment>
+                            <depends>
+                                <add_tax>1</add_tax>
+                            </depends>
+                        </tax_percentage>
+                        <configurable_heading translate="label">
+                            <label>Configurable &amp; Grouped data linkage</label>
+                            <frontend_model>channable/adminhtml_system_config_form_field_heading</frontend_model>
+                            <sort_order>90</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </configurable_heading>
+                        <conf_enabled translate="label">
+                            <label>Enable</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>91</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </conf_enabled>
+                        <conf_fields translate="label">
+                            <label>Use the Parent Data for Simple</label>
+                            <frontend_type>multiselect</frontend_type>
+                            <source_model>channable/adminhtml_system_config_source_configurable</source_model>
+                            <sort_order>92</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <conf_enabled>1</conf_enabled>
+                            </depends>
+                            <comment>Use the parent data</comment>
+                        </conf_fields>
+                        <conf_switch_urls translate="label">
+                            <label>Configurable Switch Urls</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>93</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <conf_enabled>1</conf_enabled>
+                            </depends>
+                            <comment>Create a specific url for the simple products inside the configurable products to make sure the prices and information is correct.</comment>
+                        </conf_switch_urls>
+                        <grouped_price translate="label">
+                            <label>Grouped Price</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>channable/adminhtml_system_config_source_pricemodel</source_model>
+                            <sort_order>94</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </grouped_price>
+                    </fields>
+                </data>
+                <advanced translate="label" module="channable">
+                    <label>Products - Extra data fields &amp; Shipping</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>5</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <expanded>1</expanded>
+                    <fields>
+                        <note translate="label">
+                            <label><![CDATA[We recommend adding as many attributes as possible to the Channable feed as this will greatly improve the quality of your data. Enter the Shipping Price by using the designated extra field.]]></label>
+                            <frontend_model>channable/adminhtml_system_config_form_field_note</frontend_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </note>
+                        <extra_heading translate="label">
+                            <label>The Additional Fields</label>
+                            <frontend_model>channable/adminhtml_system_config_form_field_heading</frontend_model>
+                            <sort_order>30</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </extra_heading>
+                        <extra>
+                            <label>The Additional Fields</label>
+                            <frontend_model>channable/adminhtml_config_form_field_extra</frontend_model>
+                            <backend_model>channable/adminhtml_system_config_backend_design_extra</backend_model>
+                            <sort_order>32</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </extra>
+                        <heading_shipping translate="label">
+                            <label>The Shipping Price</label>
+                            <frontend_model>channable/adminhtml_system_config_form_field_heading</frontend_model>
+                            <sort_order>50</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </heading_shipping>
+                        <shipping_method translate="label">
+                            <label>Shipping Calculation method</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>channable/adminhtml_system_config_source_shipping</source_model>
+                            <sort_order>51</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </shipping_method>
+                        <shipping_price>
+                            <label>The Shipping Price</label>
+                            <frontend_model>channable/adminhtml_config_form_field_shipping</frontend_model>
+                            <backend_model>channable/adminhtml_system_config_backend_design_shipping</backend_model>
+                            <sort_order>52</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </shipping_price>
+                    </fields>
+                </advanced>
+                <filter translate="label" module="channable">
+                    <label>Channable - Filter Conditions</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>6</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <expanded>1</expanded>
+                    <fields>
+                        <note translate="label">
+                            <label><![CDATA[This option allows you to include/exclude product from the Channable feed. <br>]]></label>
+                            <frontend_model>channable/adminhtml_system_config_form_field_note</frontend_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </note>
+                        <category_heading translate="label">
+                            <label>Filter based on Category</label>
+                            <frontend_model>channable/adminhtml_system_config_form_field_heading</frontend_model>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </category_heading>
+                        <category_enabled translate="label">
+                            <label>Enabled</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>21</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </category_enabled>
+                        <category_type translate="label">
+                            <label>Type of the filter</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>channable/adminhtml_system_config_source_categorytype</source_model>
+                            <sort_order>22</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <category_enabled>1</category_enabled>
+                            </depends>
+                        </category_type>
+                        <categories translate="label">
+                            <label>Category</label>
+                            <frontend_type>multiselect</frontend_type>
+                            <source_model>channable/adminhtml_system_config_source_category</source_model>
+                            <sort_order>23</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <category_enabled>1</category_enabled>
+                            </depends>
+                        </categories>
+                        <stock_heading translate="label">
+                            <label>Exclude Products by Stock level</label>
+                            <frontend_model>channable/adminhtml_system_config_form_field_heading</frontend_model>
+                            <sort_order>30</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </stock_heading>
+                        <stock translate="label">
+                            <label>Exclude the out of stock products</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>31</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </stock>
+                        <advanced_heading translate="label">
+                            <label>Advanced</label>
+                            <frontend_model>channable/adminhtml_system_config_form_field_heading</frontend_model>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </advanced_heading>
+                        <advanced>
+                            <label>Advanced Filter</label>
+                            <frontend_model>channable/adminhtml_config_form_field_filter</frontend_model>
+                            <backend_model>channable/adminhtml_system_config_backend_design_filter</backend_model>
+                            <sort_order>42</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </advanced>
+                    </fields>
+                </filter>
+                <server translate="label" module="channable">
+                    <label>Overwrite the server settings</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>7</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <expanded>1</expanded>
+                    <fields>
+                        <overwrite translate="label">
+                            <label>Enabled</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>21</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <tooltip>Only use this option if it's necessary to overwrite this setting because of your server memory limit or execution time.</tooltip>
+                        </overwrite>
+                        <memory_limit translate="label">
+                            <label>The Memory Limit</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>22</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <overwrite>1</overwrite>
+                            </depends>
+                            <comment><![CDATA[This overwrites the maximum amount of memory in bytes that a script is allowed to allocate, eg 1024M.]]></comment>
+                        </memory_limit>
+                        <max_execution_time translate="label">
+                            <label>The Max Execution Time</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>23</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <overwrite>1</overwrite>
+                            </depends>
+                            <comment><![CDATA[This overwrites the maximum time in seconds a script is allowed to run before it is terminated by the parser, eg: 300 (for 5 minutes).]]></comment>
+                        </max_execution_time>
+                    </fields>
+                </server>
+                <settings translate="label" module="channable">
+                    <label>Feeds - Available</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>8</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <expanded>1</expanded>
+                    <fields>
+                        <note translate="label">
+                            <label><![CDATA[Each store view will have their own Channable feed. Use the auto connect button to connect the Feed with your Channable account.]]></label>
+                            <frontend_model>channable/adminhtml_system_config_form_field_note</frontend_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </note>
+                        <feeds_text translate="label">
+                            <label>Text</label>
+                            <frontend_model>channable/adminhtml_system_config_form_field_feeds</frontend_model>
+                            <sort_order>11</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </feeds_text>
+                    </fields>
+                </settings>
+            </groups>
+        </channable>
+    </sections>
+</config>
