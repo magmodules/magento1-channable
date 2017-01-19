@@ -100,6 +100,6 @@
 "Use default","Use default"
 "Use the parent data","Use the parent data"
 "Use the Parent Data for Simple","Use the Parent Data for Simple"
-"Warning: The following used attribute(s) were not found in the flat catalog: %s. This can result in empty data or higher resource usage. Click <a href=""%s"">here</a> to add these to the flat catalog. ","Warning: The following used attribute(s) were not found in the flat catalog: %s. This can result in empty data or higher resource usage. Click <a href=""%s">here</a> to add these to the flat catalog. "
+"Warning: The following used attribute(s) were not found in the flat catalog: %s. This can result in empty data or higher resource usage. Click <a href=""%s"">here</a> to add these to the flat catalog. ","Warning: The following used attribute(s) were not found in the flat catalog: %s. This can result in empty data or higher resource usage. Click <a href=""%s"">here</a> to add these to the flat catalog. "
 "We recommend adding as many attributes as possible to the Channable feed as this will greatly improve the quality of your data. Enter the Shipping Price by using the designated extra field.","We recommend adding as many attributes as possible to the Channable feed as this will greatly improve the quality of your data. Enter the Shipping Price by using the designated extra field."
 "Weight","Weight"
