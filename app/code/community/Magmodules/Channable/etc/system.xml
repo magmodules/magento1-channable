@@ -616,6 +616,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
+                            <comment>This function is only working when you still have the product visible in the front-end when it's out of stock.</comment>
                         </stock>
                         <advanced_heading translate="label">
                             <label>Advanced</label>

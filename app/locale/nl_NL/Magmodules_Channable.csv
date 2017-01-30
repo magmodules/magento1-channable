@@ -85,6 +85,7 @@
 "The Memory Limit","Geheugen limiet"
 "Type of the filter","Type filter"
 "This overwrites the maximum amount of memory in bytes that a script is allowed to allocate, eg 1024M.","Dit overschrijft de maximale hoeveelheid geheugen in bytes dat het script maximaal mag gebruiken, bijvoorbeeld 1024M."
+"This function is only working when you still have the product visible in the front-end when it's out of stock.","Deze functie werkt enkel indien het product welke uit de voorraad is nog steeds zichtbaar is in de front-end."
 "Max Execution Time","Maximale uitvoer tijd"
 "This overwrites the maximum time in seconds a script is allowed to run before it is terminated by the parser, eg: 300 (for 5 minutes).","Dit overschrijft de maximale tijd in seconden dat het script mag draaien voordat het wordt beëindigd, bijvoorbeeld: 300 (5 minuten)."
 "Only use this option if it's necessary to overwrite this setting because of your server memory limit or execution time.","Gebruik deze optie alleen als het nodig is om de instelling van het geheugen limiet of uitvoertijd van je server te overschrijven."
