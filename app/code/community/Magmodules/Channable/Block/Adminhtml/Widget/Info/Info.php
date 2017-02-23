@@ -35,6 +35,7 @@ class Magmodules_Channable_Block_Adminhtml_Widget_Info_Info
 
         $logoLink = '//www.magmodules.eu/logo/channable/' . $moduleVersion . '/' . $magentoVersion . '/logo.png';
 
+
         $html = '<div style="background:url(\'' . $logoLink . '\') no-repeat scroll 15px center #EAF0EE;border:1px solid #CCCCCC;margin-bottom:10px;padding:10px 5px 5px 200px;">
 					<h4>About Magmodules.eu</h4>
 					<p>We are a Magento only E-commerce Agency located in the Netherlands.<br>

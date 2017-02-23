@@ -456,11 +456,24 @@
                             </depends>
                             <comment>Use the parent data</comment>
                         </conf_fields>
+                        <simple_price translate="label">
+                            <label>Use Simple Product Pricing</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>73</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <conf_enabled>1</conf_enabled>
+                            </depends>
+                            <comment>Only enable this option when you have enabled an extension that is using the simple prices in your store.</comment>
+                        </simple_price>
                         <conf_switch_urls translate="label">
                             <label>Configurable Switch Urls</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>93</sort_order>
+                            <sort_order>94</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -473,7 +486,7 @@
                             <label>Grouped Price</label>
                             <frontend_type>select</frontend_type>
                             <source_model>channable/adminhtml_system_config_source_pricemodel</source_model>
-                            <sort_order>94</sort_order>
+                            <sort_order>95</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -616,6 +629,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
+                            <comment>This function is only working when you still have the product visible in the front-end when it's out of stock.</comment>
                         </stock>
                         <advanced_heading translate="label">
                             <label>Advanced</label>

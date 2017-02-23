@@ -95,6 +95,7 @@
 "This option allows you to include/exclude product from the Channable feed. <br>","This option allows you to include/exclude product from the Channable feed. <br>"
 "This overwrites the maximum amount of memory in bytes that a script is allowed to allocate, eg 1024M.","This overwrites the maximum amount of memory in bytes that a script is allowed to allocate, eg 1024M."
 "This overwrites the maximum time in seconds a script is allowed to run before it is terminated by the parser, eg: 300 (for 5 minutes).","This overwrites the maximum time in seconds a script is allowed to run before it is terminated by the parser, eg: 300 (for 5 minutes)."
+"This function is only working when you still have the product visible in the front-end when it's out of stock.","This function is only working when you still have the product visible in the front-end when it's out of stock."
 "Type of the filter","Type of the filter"
 "Use default","Use default"
 "Use the parent data","Use the parent data"

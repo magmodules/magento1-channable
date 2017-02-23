@@ -33,5 +33,15 @@ if (empty($token)) {
     }
 }
 
-Mage::getModel('core/config')->saveConfig('channable/connect/token', Mage::helper('core')->encrypt($token));
-Mage::app()->getCacheInstance()->cleanType('config');
+$tokenEncrypted = Mage::getModel('core/config_data')->getCollection()
+    ->addFieldToFilter('path', 'channable/connect/token_encrypted')
+    ->addFieldToFilter('scope_id', 0)
+    ->addFieldToFilter('scope', 'default')
+    ->getFirstItem()
+    ->getValue();
+
+if (empty($tokenEncrypted)) {
+    $encrypt = Mage::helper('core')->encrypt($token);
+    Mage::getModel('core/config')->saveConfig('channable/connect/token_encrypted', 1);
+    Mage::getModel('core/config')->saveConfig('channable/connect/token', $encrypt);
+}
