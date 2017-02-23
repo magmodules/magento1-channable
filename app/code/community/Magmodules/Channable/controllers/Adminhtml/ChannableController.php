@@ -42,7 +42,37 @@ class Magmodules_Channable_Adminhtml_ChannableController extends Mage_Adminhtml_
         $this->_redirect('adminhtml/system_config/edit/section/channable');
     }
 
-    /**~
+    /**
+     * Token create / update function
+     */
+    public function createTokenAction()
+    {
+        $oldToken = Mage::getModel('core/config_data')->getCollection()
+            ->addFieldToFilter('path', 'channable/connect/token')
+            ->addFieldToFilter('scope_id', 0)
+            ->addFieldToFilter('scope', 'default')
+            ->getFirstItem()
+            ->getValue();
+
+        $token = '';
+        $chars = str_split("abcdefghijklmnopqrstuvwxyz0123456789");
+        for ($i = 0; $i < 32; $i++) {
+          $token .= $chars[array_rand($chars)];
+        }
+
+        Mage::getModel('core/config')->saveConfig('channable/connect/token', Mage::helper('core')->encrypt($token));
+
+        if (!empty($oldToken)) {
+            $msg = 'New Token created, please update Channable Dashboard with this new token';
+        } else {
+            $msg = 'New Token created, please link your account using the auto update';
+        }
+
+        Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('channable')->__($msg));
+        $this->_redirect('adminhtml/system_config/edit/section/channable');
+    }
+
+    /**
      * @return mixed
      */
     protected function _isAllowed()

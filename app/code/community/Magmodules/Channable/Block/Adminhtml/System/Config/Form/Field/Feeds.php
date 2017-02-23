@@ -32,26 +32,28 @@ class Magmodules_Channable_Block_Adminhtml_System_Config_Form_Field_Feeds
     {
         $helper = Mage::helper('channable');
         $storeIds = $helper->getStoreIds('channable/connect/enabled');
-        $token = Mage::getStoreConfig('channable/connect/token');
+        $token = Mage::helper('channable')->getToken();
         $sHtml = '';
 
-        foreach ($storeIds as $storeId) {
-            $baseUrl = Mage::app()->getStore($storeId)->getBaseUrl(Mage_Core_Model_Store::URL_TYPE_LINK);
-            $channableFeed = $baseUrl . 'channable/feed/get/code/' . $token . '/store/' . $storeId . '/array/1';
-            $storeTitle = Mage::app()->getStore($storeId)->getName();
-            $url = "https://app.channable.com/connect/magento.html?";
-            $url .= "store_id=' . $storeId . '&url=' . $baseUrl . '&token=' . $token . '";
-            $msg = $this->__('Click to auto connect with Channable');
+        if ($token) {
+            foreach ($storeIds as $storeId) {
+                $baseUrl = Mage::app()->getStore($storeId)->getBaseUrl(Mage_Core_Model_Store::URL_TYPE_LINK);
+                $channableFeed = $baseUrl . 'channable/feed/get/code/' . $token . '/store/' . $storeId . '/array/1';
+                $storeTitle = Mage::app()->getStore($storeId)->getName();
+                $url = 'https://app.channable.com/connect/magento.html?';
+                $url .= 'store_id=' . $storeId . '&url=' . $baseUrl . '&token=' . $token;
+                $msg = $this->__('Click to auto connect with Channable');
 
-            $sHtml .= '<tr>
-                        <td>' . $storeTitle . '</td>
-                        <td><a href="' . $channableFeed . '">' . $this->__('Preview') . '</a></td>
-                        <td><a href="' . $url . '" target="_blank">' . $msg . '</a></td>
-                      </tr>';
+                $sHtml .= '<tr>
+                 <td>' . $storeTitle . '</td>
+                 <td><a href="' . $channableFeed . '">' . $this->__('Preview') . '</a></td>
+                 <td><a href="' . $url . '" target="_blank">' . $msg . '</a></td>
+                </tr>';
+            }
         }
 
         if (!$sHtml) {
-            $html = $helper->__('No enabled feed(s) found');
+            $html = $helper->__('No enabled feed(s) found or token missing');
         } else {
             $html = '<div class="grid">
                          <table cellpadding="0" cellspacing="0" class="border" style="width:425px;">

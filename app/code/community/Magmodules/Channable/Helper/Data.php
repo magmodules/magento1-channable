@@ -1057,7 +1057,10 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     public function getTypePrices($config, $products)
     {
         $typePrices = array();
-        if (!empty($config['conf_enabled'])) {
+        $confEnabled = $config['conf_enabled'];
+        $simplePrice = $config['simple_price'];
+
+        if (!empty($confEnabled) && empty($simplePrice)) {
             foreach ($products as $product) {
                 if ($product->getTypeId() == 'configurable') {
                     $parentId = $product->getEntityId();
@@ -1227,5 +1230,38 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         return $suffix;
+    }
+
+    public function getToken()
+    {
+        $token = $this->getUncachedConfigValue('channable/connect/token', 0);
+        $token = Mage::helper('core')->decrypt($token);
+        $strlen = strlen($token);
+
+        if ($strlen == 32 || $strlen == 16) {
+            if (ctype_alnum($token)) {
+                return $token;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param     $path
+     * @param int $storeId
+     *
+     * @return mixed
+     */
+    public function getUncachedConfigValue($path, $storeId = 0)
+    {
+        $collection = Mage::getModel('core/config_data')->getCollection()->addFieldToFilter('path', $path);
+        if ($storeId == 0) {
+            $collection = $collection->addFieldToFilter('scope_id', 0)->addFieldToFilter('scope', 'default');
+        } else {
+            $collection = $collection->addFieldToFilter('scope_id', $storeId)->addFieldToFilter('scope', 'stores');
+        }
+
+        return $collection->getFirstItem()->getValue();
     }
 }

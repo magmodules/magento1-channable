@@ -32,7 +32,7 @@ class Magmodules_Channable_FeedController extends Mage_Core_Controller_Front_Act
             $code = $this->getRequest()->getParam('code');
             $page = $this->getRequest()->getParam('page');
             if ($storeId && $code) {
-                if ($code == Mage::getStoreConfig('channable/connect/token')) {
+                if ($code == Mage::helper('channable')->getToken()) {
                     $timeStart = microtime(true);
                     $limit = Mage::getStoreConfig('channable/connect/max_products', $storeId);
                     $appEmulation = Mage::getSingleton('core/app_emulation');
