@@ -411,6 +411,8 @@ class Magmodules_Channable_Model_Channable extends Magmodules_Channable_Model_Co
             }
         } else {
             $prices['price'] = $data['price'];
+            $prices['min_price'] = $data['min_price'];
+            $prices['max_price'] = $data['max_price'];
             $prices['special_price'] = '';
             $prices['special_price_from'] = '';
             $prices['special_price_to'] = '';

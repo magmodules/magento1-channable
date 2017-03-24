@@ -527,6 +527,10 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
             $price = $product->getPrice();
         }
 
+        if($price == 0) {
+            $price = $product->getMinPrice();
+        }
+
         $price = Mage::helper('tax')->getPrice($product, $price, $taxParam);
         $priceData['regular_price'] = number_format(($price * $priceMarkup), 2, '.', '') . $currency;
         $pricerulePrice = Mage::helper('tax')->getPrice($product, $product->getFinalPrice(), $taxParam);
@@ -560,6 +564,11 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
 
         $priceData['final_price_clean'] = $price;
         $priceData['price'] = number_format(($price * $priceMarkup), 2, '.', '') . $currency;
+
+        $minPrice = Mage::helper('tax')->getPrice($product, $product->getMinPrice(), $taxParam);
+        $maxPrice = Mage::helper('tax')->getPrice($product, $product->getMaxPrice(), $taxParam);
+        $priceData['min_price'] = number_format(($minPrice * $priceMarkup), 2, '.', '') . $currency;
+        $priceData['max_price'] = number_format(($maxPrice * $priceMarkup), 2, '.', '') . $currency;
 
         if (isset($salesPrice)) {
             $priceData['sales_price'] = number_format(($salesPrice * $priceMarkup), 2, '.', '') . $currency;
