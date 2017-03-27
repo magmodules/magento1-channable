@@ -49,8 +49,11 @@ class Magmodules_Channable_FeedController extends Mage_Core_Controller_Front_Act
                         if ($this->getRequest()->getParam('array')) {
                             $this->getResponse()->setBody(Zend_Debug::dump($feed, null, false));
                         } else {
-                            $this->getResponse()->clearHeaders()->setHeader('Content-type', 'application/json', true);
-                            $this->getResponse()->setBody(json_encode($feed));
+                            $this->getResponse()
+                                ->clearHeaders()
+                                ->setHeader('Content-type', 'application/json', true)
+                                ->setHeader('Cache-control', 'no-cache', true)
+                                ->setBody(json_encode($feed));
                         }
                     }
 
