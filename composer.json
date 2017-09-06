@@ -1,0 +1,19 @@
+{
+  "name": "magmodules/magento1-channable",
+  "type": "magento-module",
+  "description": "Magento 1 Channable integration",
+  "version": "v1.5.3",
+  "keywords": [
+    "magento"
+  ],
+  "homepage": "https://github.com/magmodules/magento1-channable",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Magmodules"
+    }
+  ],
+  "require": {
+    "php": ">5.6.0"
+  }
+}
