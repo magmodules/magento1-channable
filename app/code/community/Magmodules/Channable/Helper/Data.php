@@ -187,6 +187,9 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
             case 'attribute_set_id':
                 $value = $this->getAttributeSetName($productData);
                 break;
+            case 'stock':
+                $value = $this->getStock($productData, $config['stock_bundle']);
+                break;
             case 'categories':
                 $value = $this->getProductCategories($productData, $config);
                 break;
@@ -678,11 +681,45 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getProductBundle($product)
     {
+
         if ($product->getTypeId() == 'bundle') {
             return 'true';
         }
 
         return false;
+    }
+
+    /**
+     * @param $product
+     *
+     * @return string
+     */
+    public function getStock($product, $bundleStock)
+    {
+        if ($product->getTypeId() != 'bundle') {
+            return $product->getData('qty');
+        }
+
+        if($bundleStock) {
+            $avQty = array();
+            $block = Mage::getSingleton('core/layout')->createBlock('bundle/catalog_product_view_type_bundle');
+            $options = $block->setProduct($product)->getOptions();
+            foreach ($options as $option) {
+                if($option->getRequired()) {
+                    $selection = $option->getDefaultSelection();
+                    if ($selection === null) {
+                        continue;
+                    }
+                    if ($selection->getSelectionQty() > 0) {
+                        $avQty[] = ($selection->getStockItem()->getQty() / $selection->getSelectionQty());
+                    }
+                }
+            }
+
+            return min($avQty);
+        }
+
+        return null;
     }
 
     /**
