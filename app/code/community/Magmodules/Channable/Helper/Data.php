@@ -228,13 +228,8 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
             return $dataRow;
         }
 
-        if (!empty($value) || is_numeric($value)) {
-            $dataRow[$data['label']] = $value;
-
-            return $dataRow;
-        }
-
-        return false;
+        $dataRow[$data['label']] = $value;
+        return $dataRow;
     }
 
     /**
