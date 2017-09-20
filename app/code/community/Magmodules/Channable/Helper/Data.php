@@ -24,6 +24,7 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
 
     /**
      * @param $path
+     *
      * @return array
      */
     public function getStoreIds($path)
@@ -44,6 +45,7 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
      * @param $config
      * @param $parent
      * @param $parentAttributes
+     *
      * @return array|bool
      */
     public function getProductDataRow($product, $config, $parent, $parentAttributes)
@@ -81,6 +83,7 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
      * @param $parent
      * @param $config
      * @param $product
+     *
      * @return bool
      */
     public function validateParent($parent, $config, $product)
@@ -92,6 +95,7 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
      * @param $product
      * @param $config
      * @param $parent
+     *
      * @return bool
      */
     public function validateProduct($product, $config, $parent)
@@ -138,15 +142,18 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * @param $field
-     * @param $product
-     * @param $config
+     * @param        $field
+     * @param        $product
+     * @param        $config
      * @param string $actions
-     * @param $parent
-     * @return bool
+     * @param        $parent
+     * @param        $parentAttributes
+     *
+     * @return string
      */
     public function getAttributeValue($field, $product, $config, $actions = '', $parent, $parentAttributes)
     {
+        $dataRow = '';
         $data = $config['field'][$field];
         $productData = $product;
 
@@ -187,6 +194,9 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
             case 'attribute_set_id':
                 $value = $this->getAttributeSetName($productData);
                 break;
+            case 'stock':
+                $value = $this->getStock($productData, $config['stock_bundle']);
+                break;
             case 'categories':
                 $value = $this->getProductCategories($productData, $config);
                 break;
@@ -225,40 +235,17 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
             return $dataRow;
         }
 
-        if (!empty($value) || is_numeric($value)) {
-            $dataRow[$data['label']] = $value;
-
-            return $dataRow;
-        }
-
-        return false;
-    }
-
-    /**
-     * @param $product
-     * @param $config
-     * @return string
-     */
-    public function getIsInStock($product, $config)
-    {
-        if ($product->getUseConfigManageStock()) {
-            $manageStock = $config['stock_manage'];
-        } else {
-            $manageStock = $product->getManageStock();
-        }
-
-        if ($manageStock) {
-            return $product->getIsInStock();
-        } else {
-            return "1";
-        }
+        $dataRow[$data['label']] = $value;
+        return $dataRow;
     }
 
     /**
      * @param $product
      * @param $config
      * @param $parent
-     * @return string
+     * @param $parentAttributes
+     *
+     * @return mixed|string
      */
     public function getProductUrl($product, $config, $parent, $parentAttributes)
     {
@@ -314,24 +301,10 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
         return $url;
     }
 
-    public function getConfigurableAttributesAsArray($parents, $config)
-    {
-        $configurableAttributes = array();
-        if (!empty($config['conf_switch_urls'])) {
-            foreach ($parents as $parent) {
-                if ($parent->getTypeId() == 'configurable') {
-                    $configurableAttributes[$parent->getEntityId()] = $parent->getTypeInstance(true)
-                        ->getConfigurableAttributesAsArray($parent);
-                }
-            }
-        }
-
-        return $configurableAttributes;
-    }
-
     /**
      * @param $product
      * @param $config
+     *
      * @return array|string
      */
     public function getProductImage($product, $config)
@@ -393,7 +366,8 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
                 $imageData['image_link'] = $image;
                 $container = new Varien_Object(
                     array(
-                        'attribute' => new Varien_Object(array('id' => $config['media_gallery_id'])))
+                        'attribute' => new Varien_Object(array('id' => $config['media_gallery_id']))
+                    )
                 );
                 $imgProduct = new Varien_Object(array('id' => $product->getId(), 'store_id' => $config['store_id']));
                 $gallery = Mage::getResourceModel('catalog/product_attribute_backend_media')->loadGallery(
@@ -405,7 +379,7 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
                 usort(
                     $gallery, function ($a, $b) {
                     return $a['position_default'] > $b['position_default'];
-                    }
+                }
                 );
                 foreach ($gallery as $galleryImage) {
                     if ($galleryImage['disabled'] == 0) {
@@ -433,6 +407,7 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * @param $product
      * @param $config
+     *
      * @return bool
      */
     public function getProductCondition($product, $config)
@@ -455,6 +430,7 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * @param $product
      * @param $config
+     *
      * @return bool
      */
     public function getProductAvailability($product, $config)
@@ -485,6 +461,7 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * @param $product
      * @param $config
+     *
      * @return bool|string
      */
     public function getProductWeight($product, $config)
@@ -494,16 +471,18 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
             if (isset($config['weight_units'])) {
                 $weight = $weight . ' ' . $config['weight_units'];
             }
-
-            return $weight;
+            if (!empty($weight)) {
+                return $weight;
+            }
         }
 
-        return false;
+        return '';
     }
 
     /**
      * @param $product
      * @param $config
+     *
      * @return array
      */
     public function getProductPrice($product, $config)
@@ -527,7 +506,7 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
             $price = $product->getPrice();
         }
 
-        if($price == 0) {
+        if ($price == 0) {
             $price = $product->getMinPrice();
         }
 
@@ -579,6 +558,7 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
 
     /**
      * @param $config
+     *
      * @return int
      */
     public function getPriceMarkup($config)
@@ -603,6 +583,7 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * @param $product
      * @param $storeId
+     *
      * @return int
      */
     public function getPriceBundle($product, $storeId)
@@ -636,8 +617,9 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * @param $product
+     * @param        $product
      * @param string $pricemodel
+     *
      * @return bool|mixed|number
      */
     public function getPriceGrouped($product, $pricemodel = '')
@@ -674,10 +656,12 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
 
     /**
      * @param $product
+     *
      * @return bool|string
      */
     public function getProductBundle($product)
     {
+
         if ($product->getTypeId() == 'bundle') {
             return 'true';
         }
@@ -687,8 +671,30 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
 
     /**
      * @param $product
-     * @param $data
+     * @param $config
+     *
+     * @return string
+     */
+    public function getIsInStock($product, $config)
+    {
+        if ($product->getUseConfigManageStock()) {
+            $manageStock = $config['stock_manage'];
+        } else {
+            $manageStock = $product->getManageStock();
+        }
+
+        if ($manageStock) {
+            return $product->getIsInStock();
+        } else {
+            return "1";
+        }
+    }
+
+    /**
+     * @param        $product
+     * @param        $data
      * @param string $config
+     *
      * @return string
      */
     public function getProductData($product, $data, $config = '')
@@ -706,13 +712,19 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
                 }
                 break;
             case 'select':
-                $value = $product->getAttributeText($source);
+                $attributetext = $product->getAttributeText($source);
+                if (!empty($attributetext)) {
+                    $value = $attributetext;
+                }
                 break;
             case 'multiselect':
                 if (is_array($product->getAttributeText($source))) {
-                    $value = implode(',', $product->getAttributeText($source));
+                    $attributetext = implode(',', $product->getAttributeText($source));
                 } else {
-                    $value = $product->getAttributeText($source);
+                    $attributetext = $product->getAttributeText($source);
+                }
+                if (!empty($attributetext)) {
+                    $value = $attributetext;
                 }
                 break;
             default:
@@ -727,6 +739,7 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
 
     /**
      * @param $product
+     *
      * @return mixed
      */
     public function getAttributeSetName($product)
@@ -736,7 +749,41 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
 
     /**
      * @param $product
+     *
+     * @return string
+     */
+    public function getStock($product, $bundleStock)
+    {
+        if ($product->getTypeId() != 'bundle') {
+            return $product->getData('qty');
+        }
+
+        if ($bundleStock) {
+            $avQty = array();
+            $block = Mage::getSingleton('core/layout')->createBlock('bundle/catalog_product_view_type_bundle');
+            $options = $block->setProduct($product)->getOptions();
+            foreach ($options as $option) {
+                if ($option->getRequired()) {
+                    $selection = $option->getDefaultSelection();
+                    if ($selection === null) {
+                        continue;
+                    }
+                    if ($selection->getSelectionQty() > 0) {
+                        $avQty[] = ($selection->getStockItem()->getQty() / $selection->getSelectionQty());
+                    }
+                }
+            }
+
+            return min($avQty);
+        }
+
+        return null;
+    }
+
+    /**
+     * @param $product
      * @param $config
+     *
      * @return array
      */
     public function getProductCategories($product, $config)
@@ -769,6 +816,7 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * @param $data
      * @param $sort
+     *
      * @return array
      */
     function getSortedArray($data, $sort)
@@ -780,8 +828,9 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * @param $st
+     * @param        $st
      * @param string $action
+     *
      * @return mixed|string
      */
     public function cleanData($st, $action = '')
@@ -848,7 +897,29 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * @param $parents
      * @param $config
+     *
+     * @return array
+     */
+    public function getConfigurableAttributesAsArray($parents, $config)
+    {
+        $configurableAttributes = array();
+        if (!empty($config['conf_switch_urls'])) {
+            foreach ($parents as $parent) {
+                if ($parent->getTypeId() == 'configurable') {
+                    $configurableAttributes[$parent->getEntityId()] = $parent->getTypeInstance(true)
+                        ->getConfigurableAttributesAsArray($parent);
+                }
+            }
+        }
+
+        return $configurableAttributes;
+    }
+
+    /**
+     * @param $config
+     *
      * @return string
      */
     public function getTaxUsage($config)
@@ -865,8 +936,9 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * @param $attributes
+     * @param        $attributes
      * @param string $config
+     *
      * @return mixed
      */
     public function addAttributeData($attributes, $config = '')
@@ -891,9 +963,9 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
             }
 
             $attributes[$key] = array(
-                'label' => $attribute['label'],
+                'label'  => $attribute['label'],
                 'source' => $attribute['source'],
-                'type' => $type,
+                'type'   => $type,
                 'action' => $action,
                 'parent' => $parent
             );
@@ -905,6 +977,7 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * @param $config
      * @param $storeId
+     *
      * @return array
      */
     public function getCategoryData($config, $storeId)
@@ -994,10 +1067,10 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
 
             if ($exclude != 1) {
                 $_categories[$cat->getId()] = array(
-                    'path' => $cat['path'],
-                    'custom' => $custom,
-                    'name' => $name,
-                    'level' => $cat['level'],
+                    'path'    => $cat['path'],
+                    'custom'  => $custom,
+                    'name'    => $name,
+                    'level'   => $cat['level'],
                     'exclude' => $exclude
                 );
             }
@@ -1019,11 +1092,11 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
             }
 
             $_categories[$key] = array(
-                'path' => $this->cleanData($path, 'stiptags'),
+                'path'        => $this->cleanData($path, 'stiptags'),
                 'custom_path' => $this->cleanData($customPath, 'stiptags'),
-                'custom' => $this->cleanData(end($customPath), 'striptags'),
-                'name' => $this->cleanData($cat['name'], 'striptags'),
-                'level' => $cat['level']
+                'custom'      => $this->cleanData(end($customPath), 'striptags'),
+                'name'        => $this->cleanData($cat['name'], 'striptags'),
+                'level'       => $cat['level']
             );
         }
 
@@ -1033,6 +1106,7 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * @param $product
      * @param $config
+     *
      * @return bool
      */
     public function getParentData($product, $config)
@@ -1061,6 +1135,7 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * @param $config
      * @param $products
+     *
      * @return array
      */
     public function getTypePrices($config, $products)
@@ -1124,9 +1199,10 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * @param $price
+     * @param      $price
      * @param bool $isPercent
-     * @param $product
+     * @param      $product
+     *
      * @return float|int
      */
     public function preparePrice($price, $isPercent = false, $product)
@@ -1139,9 +1215,10 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * @param $price
+     * @param      $price
      * @param bool $isPercent
-     * @param $product
+     * @param      $product
+     *
      * @return float|int
      */
     public function prepareOldPrice($price, $isPercent = false, $product)
@@ -1155,6 +1232,7 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
 
     /**
      * @param $dir
+     *
      * @return bool
      */
     public function checkOldVersion($dir)
@@ -1170,6 +1248,7 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
 
     /**
      * @param $attributes
+     *
      * @return array
      */
     public function checkFlatCatalog($attributes)
@@ -1227,6 +1306,7 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
 
     /**
      * @param $storeId
+     *
      * @return string
      */
     public function getProductUrlSuffix($storeId)

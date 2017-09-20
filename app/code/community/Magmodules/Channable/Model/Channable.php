@@ -100,6 +100,7 @@ class Magmodules_Channable_Model_Channable extends Magmodules_Channable_Model_Co
         $config['conf_enabled'] = Mage::getStoreConfig('channable/data/conf_enabled', $storeId);
         $config['conf_fields'] = Mage::getStoreConfig('channable/data/conf_fields', $storeId);
         $config['parent_att'] = $this->getParentAttributeSelection($config['conf_fields']);
+        $config['stock_bundle'] = Mage::getStoreConfig('channable/data/stock_bundle', $storeId);
         $config['conf_switch_urls'] = Mage::getStoreConfig('channable/data/conf_switch_urls', $storeId);
         $config['simple_price'] = Mage::getStoreConfig('channable/data/simple_price', $storeId);
         $config['stock_manage'] = Mage::getStoreConfig('cataloginventory/item_options/manage_stock');
