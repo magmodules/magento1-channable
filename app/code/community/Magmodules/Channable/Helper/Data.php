@@ -41,10 +41,10 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * @param $product
-     * @param $config
-     * @param $parent
-     * @param $parentAttributes
+     * @param Mage_Catalog_Model_Product $product
+     * @param                            $config
+     * @param Mage_Catalog_Model_Product $parent
+     * @param                            $parentAttributes
      *
      * @return array|bool
      */
@@ -80,9 +80,9 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * @param $parent
-     * @param $config
-     * @param $product
+     * @param Mage_Catalog_Model_Product $parent
+     * @param                            $config
+     * @param Mage_Catalog_Model_Product $product
      *
      * @return bool
      */
@@ -92,9 +92,9 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * @param $product
-     * @param $config
-     * @param $parent
+     * @param Mage_Catalog_Model_Product $product
+     * @param                            $config
+     * @param Mage_Catalog_Model_Product $parent
      *
      * @return bool
      */
@@ -142,12 +142,12 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * @param        $field
-     * @param        $product
-     * @param        $config
-     * @param string $actions
-     * @param        $parent
-     * @param        $parentAttributes
+     * @param                                   $field
+     * @param        Mage_Catalog_Model_Product $product
+     * @param                                   $config
+     * @param string                            $actions
+     * @param        Mage_Catalog_Model_Product $parent
+     * @param                                   $parentAttributes
      *
      * @return string
      */
@@ -200,6 +200,9 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
             case 'categories':
                 $value = $this->getProductCategories($productData, $config);
                 break;
+            case 'category_ids':
+                $value = $this->getProductCategoryIds($productData, $config);
+                break;
             default:
                 if (!empty($data['source'])) {
                     $value = $this->getProductData($productData, $data, $config);
@@ -240,10 +243,10 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * @param $product
-     * @param $config
-     * @param $parent
-     * @param $parentAttributes
+     * @param Mage_Catalog_Model_Product $product
+     * @param                            $config
+     * @param Mage_Catalog_Model_Product $parent
+     * @param                            $parentAttributes
      *
      * @return mixed|string
      */
@@ -302,8 +305,8 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * @param $product
-     * @param $config
+     * @param Mage_Catalog_Model_Product $product
+     * @param                            $config
      *
      * @return array|string
      */
@@ -405,8 +408,8 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * @param $product
-     * @param $config
+     * @param Mage_Catalog_Model_Product $product
+     * @param                            $config
      *
      * @return bool
      */
@@ -428,8 +431,8 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * @param $product
-     * @param $config
+     * @param Mage_Catalog_Model_Product $product
+     * @param                            $config
      *
      * @return bool
      */
@@ -459,8 +462,8 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * @param $product
-     * @param $config
+     * @param Mage_Catalog_Model_Product $product
+     * @param                            $config
      *
      * @return bool|string
      */
@@ -480,8 +483,8 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * @param $product
-     * @param $config
+     * @param Mage_Catalog_Model_Product $product
+     * @param                            $config
      *
      * @return array
      */
@@ -581,8 +584,8 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * @param $product
-     * @param $storeId
+     * @param Mage_Catalog_Model_Product $product
+     * @param                            $storeId
      *
      * @return int
      */
@@ -617,8 +620,8 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * @param        $product
-     * @param string $pricemodel
+     * @param        Mage_Catalog_Model_Product $product
+     * @param string                            $pricemodel
      *
      * @return bool|mixed|number
      */
@@ -655,7 +658,7 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * @param $product
+     * @param Mage_Catalog_Model_Product $product
      *
      * @return bool|string
      */
@@ -670,8 +673,8 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * @param $product
-     * @param $config
+     * @param Mage_Catalog_Model_Product $product
+     * @param                            $config
      *
      * @return string
      */
@@ -691,9 +694,9 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * @param        $product
-     * @param        $data
-     * @param string $config
+     * @param        Mage_Catalog_Model_Product $product
+     * @param                                   $data
+     * @param string                            $config
      *
      * @return string
      */
@@ -738,7 +741,7 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * @param $product
+     * @param Mage_Catalog_Model_Product $product
      *
      * @return mixed
      */
@@ -748,7 +751,7 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * @param $product
+     * @param Mage_Catalog_Model_Product $product
      *
      * @return string
      */
@@ -781,8 +784,8 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * @param $product
-     * @param $config
+     * @param Mage_Catalog_Model_Product $product
+     * @param                            $config
      *
      * @return array
      */
@@ -811,6 +814,16 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
 
             return $this->getSortedArray($productsCat, 'level');
         }
+    }
+
+    /**
+     * @param Mage_Catalog_Model_Product $product
+     *
+     * @return string
+     */
+    public function getProductCategoryIds($product)
+    {
+        return implode(',', $product->getCategoryIds());
     }
 
     /**
@@ -1104,8 +1117,8 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * @param $product
-     * @param $config
+     * @param Mage_Catalog_Model_Product $product
+     * @param                            $config
      *
      * @return bool
      */
@@ -1133,8 +1146,8 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * @param $config
-     * @param $products
+     * @param                            $config
+     * @param Mage_Catalog_Model_Product $products
      *
      * @return array
      */
@@ -1199,9 +1212,9 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * @param      $price
-     * @param bool $isPercent
-     * @param      $product
+     * @param                                 $price
+     * @param bool                            $isPercent
+     * @param      Mage_Catalog_Model_Product $product
      *
      * @return float|int
      */
@@ -1215,9 +1228,9 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * @param      $price
-     * @param bool $isPercent
-     * @param      $product
+     * @param                                 $price
+     * @param bool                            $isPercent
+     * @param      Mage_Catalog_Model_Product $product
      *
      * @return float|int
      */
@@ -1254,9 +1267,10 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     public function checkFlatCatalog($attributes)
     {
         $nonFlatAttributes = array();
+        $skipCheck = array('sku','category_ids');
         foreach ($attributes as $key => $attribute) {
             if (!empty($attribute['source'])) {
-                if (($attribute['source'] != 'entity_id') && ($attribute['source'] != 'sku')) {
+                if (($attribute['source'] != 'entity_id') && !in_array($attribute['source'], $skipCheck)) {
                     $_attribute = Mage::getModel('eav/entity_attribute')->loadByCode(
                         'catalog_product',
                         $attribute['source']
@@ -1321,6 +1335,9 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
         return $suffix;
     }
 
+    /**
+     * @return bool|mixed
+     */
     public function getToken()
     {
         $token = $this->getUncachedConfigValue('channable/connect/token', 0);
