@@ -85,7 +85,7 @@ class Magmodules_Channable_Model_Channable extends Magmodules_Channable_Model_Co
         $config['media_image_url'] = $config['media_url'] . 'catalog' . DS . 'product';
         $config['media_attributes'] = $feed->getMediaAttributes();
         $config['limit'] = Mage::getStoreConfig('channable/connect/max_products', $storeId);
-        $config['version'] = (string) Mage::getConfig()->getNode()->modules->Magmodules_Channable->version;
+        $config['version'] = (string)Mage::getConfig()->getNode()->modules->Magmodules_Channable->version;
         $config['media_gallery_id'] = Mage::getResourceModel('eav/entity_attribute')->getIdByCode(
             'catalog_product',
             'media_gallery'
@@ -299,6 +299,7 @@ class Magmodules_Channable_Model_Channable extends Magmodules_Channable_Model_Co
     {
         $count = $this->getProducts($config, '', '', 'count');
         foreach ($products as $product) {
+
             if ($parentId = Mage::helper('channable')->getParentData($product, $config)) {
                 $parent = $parents->getItemById($parentId);
             } else {
@@ -340,10 +341,10 @@ class Magmodules_Channable_Model_Channable extends Magmodules_Channable_Model_Co
     }
 
     /**
-     * @param $productData
-     * @param $config
-     * @param $product
-     * @param $prices
+     * @param                            $productData
+     * @param                            $config
+     * @param Mage_Catalog_Model_Product $product
+     * @param                            $prices
      *
      * @return array
      */
@@ -358,7 +359,10 @@ class Magmodules_Channable_Model_Channable extends Magmodules_Channable_Model_Co
             }
 
             if ($priceData = $this->getPrices(
-                $productData['price'], $prices, $product, $config['currency'],
+                $productData['price'],
+                $prices,
+                $product,
+                $config['currency'],
                 $itemGroupId
             )
             ) {
@@ -448,28 +452,28 @@ class Magmodules_Channable_Model_Channable extends Magmodules_Channable_Model_Co
         if (!empty($productData['qty'])) {
             $stockData['qty'] = $productData['qty'];
         } else {
-            $stockData['qty'] = (string) '0';
+            $stockData['qty'] = (string)'0';
         }
 
         if ($product->getUseConfigManageStock()) {
-            $stockData['manage_stock'] = (string) $config['stock_manage'];
+            $stockData['manage_stock'] = (string)$config['stock_manage'];
         } else {
-            $stockData['manage_stock'] = (string) $product->getManageStock();
+            $stockData['manage_stock'] = (string)$product->getManageStock();
         }
 
         if (!empty($product['min_sale_qty'])) {
-            $stockData['min_sale_qty'] = (string) round($product['min_sale_qty']);
+            $stockData['min_sale_qty'] = (string)round($product['min_sale_qty']);
         } else {
             $stockData['min_sale_qty'] = '1';
         }
 
         if ($product->getUseEnableQtyIncrements()) {
             if (!empty($config['use_qty_increments'])) {
-                $stockData['qty_increments'] = (string) $config['qty_increments'];
+                $stockData['qty_increments'] = (string)$config['qty_increments'];
             }
         } else {
             if ($product->getUseConfigQtyIncrements()) {
-                $stockData['qty_increments'] = (string) $config['qty_increments'];
+                $stockData['qty_increments'] = (string)$config['qty_increments'];
             } else {
                 $stockData['qty_increments'] = round($product['qty_increments']);
             }
