@@ -153,7 +153,7 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getAttributeValue($field, $product, $config, $actions = '', $parent, $parentAttributes)
     {
-        $dataRow = '';
+        $dataRow = array();
         $data = $config['field'][$field];
         $productData = $product;
 
