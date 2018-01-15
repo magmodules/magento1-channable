@@ -127,7 +127,7 @@ class Magmodules_Channable_Model_Common extends Mage_Core_Helper_Abstract
             'price_index.website_id = ' . $websiteId,
             'price_index.customer_group_id = 0'
         ));
-		$colls = array('price', 'tax_class_id', 'final_price', 'min_price', 'max_price');        
+        $colls = array('final_price', 'min_price', 'max_price');
         $collection->getSelect()->joinLeft($tableName, $joinCond, $colls);
 	}
 	
