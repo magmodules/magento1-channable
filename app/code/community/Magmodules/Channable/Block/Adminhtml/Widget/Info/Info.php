@@ -57,7 +57,7 @@ class Magmodules_Channable_Block_Adminhtml_Widget_Info_Info
             </tr>
             </table><br>
           <p class="icon-head head-sales-order"><strong>Read everything about the extension configuration in our <a href="https://www.magmodules.eu/help/channable-connect" target="_blank">Knowledgebase</a></strong>.</p>    
-          <p class="icon-head head-compilation">Perform a <strong>Selftest</strong> to check your setup through the selftest button on the Advanced tab of this configuration page.</p>   
+          <p class="icon-head head-compilation">Perform a <strong><a href="#selftest">Selftest</a></strong> to check your setup through the selftest button on the Advanced tab of this configuration page.</p>   
           </div>';
 
         return $html;

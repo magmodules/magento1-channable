@@ -81,8 +81,8 @@ class Magmodules_Channable_Helper_Selftest extends Magmodules_Channable_Helper_D
 
         if (!$this->getToken()) {
             $url = Mage::helper("adminhtml")->getUrl('adminhtml/channable/createToken');
-            $msg = $this->__('Token missing, <a href="%s">create new</a>', $url);
-            $result[] = $this->getFail($msg, 'token');
+            $msg = $this->__('Token missing, <a href="%s">Create New</a>', $url);
+            $result[] = $this->getFail($msg, '#token');
         }
 
         $latestVersion = $this->latestVersion();
