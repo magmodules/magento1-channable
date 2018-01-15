@@ -14,7 +14,7 @@
  * @category      Magmodules
  * @package       Magmodules_Channable
  * @author        Magmodules <info@magmodules.eu)
- * @copyright     Copyright (c) 2017 (http://www.magmodules.eu)
+ * @copyright     Copyright (c) 2018 (http://www.magmodules.eu)
  * @license       http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  *
  */
@@ -32,23 +32,29 @@ class Magmodules_Channable_Block_Adminhtml_System_Config_Form_Field_Feeds
     {
         $helper = Mage::helper('channable');
         $storeIds = $helper->getStoreIds('channable/connect/enabled');
-        $token = Mage::helper('channable')->getToken();
+        $token = $helper->getToken();
         $sHtml = '';
 
         if ($token) {
             foreach ($storeIds as $storeId) {
-                $baseUrl = Mage::app()->getStore($storeId)->getBaseUrl(Mage_Core_Model_Store::URL_TYPE_LINK);
-                $channableFeed = $baseUrl . 'channable/feed/get/code/' . $token . '/store/' . $storeId . '/array/1';
-                $storeTitle = Mage::app()->getStore($storeId)->getName();
-                $url = 'https://app.channable.com/connect/magento.html?';
-                $url .= 'store_id=' . $storeId . '&url=' . $baseUrl . '&token=' . $token;
-                $msg = $this->__('Click to auto connect with Channable');
+                $store = Mage::getModel('core/store')->load($storeId);
+                $baseUrl = $store->getBaseUrl(Mage_Core_Model_Store::URL_TYPE_LINK);
 
-                $sHtml .= '<tr>
-                 <td>' . $storeTitle . '</td>
-                 <td><a href="' . $channableFeed . '">' . $this->__('Preview') . '</a></td>
-                 <td><a href="' . $url . '" target="_blank">' . $msg . '</a></td>
-                </tr>';
+                $url = sprintf(
+                    'https://app.channable.com/connect/magento.html?store_id=%s&url=%s&token=%s',
+                    $storeId,
+                    $baseUrl,
+                    $token
+                );
+
+                $sHtml .= sprintf(
+                    '<tr><td>%s</td><td><a href="%s">%s</a></td><td><a href="%s" target="_blank">%s</a></td></tr>',
+                    $store->getName(),
+                    $baseUrl . 'channable/feed/get/code/' . $token . '/store/' . $storeId . '/array/1',
+                    $this->__('Preview'),
+                    $url,
+                    $this->__('Click to auto connect with Channable')
+                );
             }
         }
 

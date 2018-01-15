@@ -10,3 +10,7 @@ app/locale/nl_NL/Magmodules_Channable.csv            app/locale/nl_NL/Magmodules
 app/locale/pl_PL/Magmodules_Channable.csv            app/locale/pl_PL/Magmodules_Channable.csv
 app/locale/pt_PT/Magmodules_Channable.csv            app/locale/pt_PT/Magmodules_Channable.csv
 app/locale/sv_SE/Magmodules_Channable.csv            app/locale/sv_SE/Magmodules_Channable.csv
+app/design/adminhtml/default/default/layout/magmodules_channable.xml            app/design/adminhtml/default/default/layout/magmodules_channable.xml
+skin/adminhtml/default/default/magmodules/channable/style.css            skin/adminhtml/default/default/magmodules/channable/style.css
+app/design/adminhtml/default/default/template/magmodules/channable/system/config/test_button.phtml           app/design/adminhtml/default/default/template/magmodules/channable/system/config/test_button.phtml
+app/design/adminhtml/default/default/template/magmodules/channable/system/config/test_result.phtml           app/design/adminhtml/default/default/template/magmodules/channable/system/config/test_result.phtml

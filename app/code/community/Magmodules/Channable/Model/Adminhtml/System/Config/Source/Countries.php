@@ -14,7 +14,7 @@
  * @category      Magmodules
  * @package       Magmodules_Channable
  * @author        Magmodules <info@magmodules.eu)
- * @copyright     Copyright (c) 2017 (http://www.magmodules.eu)
+ * @copyright     Copyright (c) 2018 (http://www.magmodules.eu)
  * @license       http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  *
  */
@@ -23,16 +23,28 @@ class Magmodules_Channable_Model_Adminhtml_System_Config_Source_Countries
 {
 
     /**
+     * Options array
+     *
+     * @var array
+     */
+    public $options = null;
+
+    /**
      * @return array
      */
     public function toOptionArray()
     {
-        $countries = array();
-        $countries[] = array('value' => '', 'label' => Mage::helper('channable')->__('-- All Countries'));
-        $source = Mage::getModel('adminhtml/system_config_source_country')->toOptionArray();
-        unset($source[0]);
+        if (!$this->options) {
 
-        return array_merge($countries, $source);
+            $countries = array();
+            $countries[] = array('value' => '', 'label' => Mage::helper('channable')->__('-- All Countries'));
+
+            $source = Mage::getModel('adminhtml/system_config_source_country')->toOptionArray();
+            unset($source[0]);
+
+            $this->options = array_merge($countries, $source);
+        }
+
+        return $this->options;
     }
-
 }

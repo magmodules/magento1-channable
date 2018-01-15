@@ -14,7 +14,7 @@
  * @category      Magmodules
  * @package       Magmodules_Channable
  * @author        Magmodules <info@magmodules.eu)
- * @copyright     Copyright (c) 2017 (http://www.magmodules.eu)
+ * @copyright     Copyright (c) 2018 (http://www.magmodules.eu)
  * @license       http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  *
  */
@@ -31,23 +31,27 @@ class Magmodules_Channable_Model_Adminhtml_System_Config_Backend_Design_Extra
         $value = $this->getValue();
         if (is_array($value)) {
             unset($value['__empty']);
-            if (!empty($value)) {
+            if (count($value)) {
                 $value = $this->orderData($value, 'label');
+          		foreach ($value as $key => $field) {
+                    if (!empty($field['attribute']) && !empty($field['label'])) {
+                        $label = str_replace(" ", "_", trim($field['label']));
+                        $value[$key]['label'] = strtolower($label);
+                        $value[$key]['attribute'] = $field['attribute'];
+                    } else {
+                    	unset($value[$key]);
+                    }
+                }
+
                 $keys = array();
                 for ($i = 0; $i < count($value); $i++) {
                     $keys[] = 'fields_' . uniqid();
                 }
 
-                foreach ($value as $key => $field) {
-                    $label = str_replace(" ", "_", trim($field['label']));
-                    $value[$key]['label'] = strtolower($label);
-                    $value[$key]['attribute'] = $field['attribute'];
-                }
-
                 $value = array_combine($keys, array_values($value));
             }
         }
-
+        
         $this->setValue($value);
         parent::_beforeSave();
     }

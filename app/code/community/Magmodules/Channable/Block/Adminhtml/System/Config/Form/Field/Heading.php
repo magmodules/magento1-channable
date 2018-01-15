@@ -14,7 +14,7 @@
  * @category      Magmodules
  * @package       Magmodules_Channable
  * @author        Magmodules <info@magmodules.eu)
- * @copyright     Copyright (c) 2017 (http://www.magmodules.eu)
+ * @copyright     Copyright (c) 2018 (http://www.magmodules.eu)
  * @license       http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  *
  */
@@ -30,11 +30,20 @@ class Magmodules_Channable_Block_Adminhtml_System_Config_Form_Field_Heading
      */
     public function render(Varien_Data_Form_Element_Abstract $element)
     {
-        return sprintf(
-            '<tr class="system-fieldset-sub-head" id="row_%s"><td colspan="5"><h4>%s</h4></td></tr>',
-            $element->getHtmlId(),
-            $element->getLabel()
+        $html = sprintf(
+            '
+            <tr id="row_%s">
+                <td colspan="5">
+                    <h4 id="%s" style="border-bottom: 1px solid #dddddd;padding: 20px 5px 5px 5px;">%s</h4>
+                    <div class="comment">
+                        <span>%s</span>
+                    </div>
+                </td>
+            </tr>',
+            $element->getHtmlId(), $element->getHtmlId(), $element->getLabel(), $element->getComment()
         );
+
+        return $html;
     }
 
 }

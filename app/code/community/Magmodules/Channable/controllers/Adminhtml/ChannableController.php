@@ -14,7 +14,7 @@
  * @category      Magmodules
  * @package       Magmodules_Channable
  * @author        Magmodules <info@magmodules.eu)
- * @copyright     Copyright (c) 2017 (http://www.magmodules.eu)
+ * @copyright     Copyright (c) 2018 (http://www.magmodules.eu)
  * @license       http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  *
  */
@@ -23,21 +23,46 @@ class Magmodules_Channable_Adminhtml_ChannableController extends Mage_Adminhtml_
 {
 
     /**
+     * @var Magmodules_Channable_Helper_Data
+     */
+    public $helper;
+    /**
+     * @var Magmodules_Channable_Model_Channable
+     */
+    public $model;
+
+    /** @var Mage_Adminhtml_Model_Session */
+    public $session;
+
+    /**
+     *
+     */
+    public function _construct()
+    {
+        $this->helper = Mage::helper('channable');
+        $this->model = Mage::getModel('channable/channable');
+        $this->session = Mage::getSingleton('adminhtml/session');
+    }
+
+    /**
      * addToFlat contoller action
      */
     public function addToFlatAction()
     {
-        $attributes = Mage::getModel("channable/channable")->getFeedAttributes();
-        $nonFlatAttributes = Mage::helper('channable')->checkFlatCatalog($attributes);
+        $attributes = $this->model->getFeedAttributes();
+        $nonFlatAttributes = $this->helper->checkFlatCatalog($attributes);
 
-        foreach ($nonFlatAttributes as $key => $value) {
-            Mage::getModel('catalog/resource_eav_attribute')->load($key)
-                ->setUsedInProductListing(1)
-                ->save();
+        try {
+            foreach ($nonFlatAttributes as $key => $value) {
+                Mage::getModel('catalog/resource_eav_attribute')->load($key)
+                    ->setUsedInProductListing(1)
+                    ->save();
+            }
+            $msg = $this->helper->__('Attributes added to Flat Catalog, please reindex Product Flat Data.');
+            $this->session->addSuccess($msg);
+        } catch (\Exception $e) {
+            $this->session->addError($e->getMessage());
         }
-
-        $msg = Mage::helper('channable')->__('Attributes added to Flat Catalog, please reindex Product Flat Data.');
-        Mage::getSingleton('adminhtml/session')->addSuccess($msg);
 
         $this->_redirect('adminhtml/system_config/edit/section/channable');
     }
@@ -47,28 +72,34 @@ class Magmodules_Channable_Adminhtml_ChannableController extends Mage_Adminhtml_
      */
     public function createTokenAction()
     {
-        $oldToken = Mage::getModel('core/config_data')->getCollection()
-            ->addFieldToFilter('path', 'channable/connect/token')
-            ->addFieldToFilter('scope_id', 0)
-            ->addFieldToFilter('scope', 'default')
-            ->getFirstItem()
-            ->getValue();
+        try {
+            $oldToken = Mage::getModel('core/config_data')->getCollection()
+                ->addFieldToFilter('path', 'channable/connect/token')
+                ->addFieldToFilter('scope_id', 0)
+                ->addFieldToFilter('scope', 'default')
+                ->getFirstItem()
+                ->getValue();
 
-        $token = '';
-        $chars = str_split("abcdefghijklmnopqrstuvwxyz0123456789");
-        for ($i = 0; $i < 32; $i++) {
-          $token .= $chars[array_rand($chars)];
+            $token = '';
+            $chars = str_split("abcdefghijklmnopqrstuvwxyz0123456789");
+            for ($i = 0; $i < 32; $i++) {
+                $token .= $chars[array_rand($chars)];
+            }
+
+            Mage::getModel('core/config')
+                ->saveConfig('channable/connect/token', Mage::helper('core')->encrypt($token));
+
+            if (!empty($oldToken)) {
+                $msg = 'New Token created, please update Channable Dashboard with this new token';
+            } else {
+                $msg = 'New Token created, please link your account using the auto update';
+            }
+
+            $this->session->addSuccess(Mage::helper('channable')->__($msg));
+        } catch (\Exception $e) {
+            $this->session->addError($e->getMessage());
         }
 
-        Mage::getModel('core/config')->saveConfig('channable/connect/token', Mage::helper('core')->encrypt($token));
-
-        if (!empty($oldToken)) {
-            $msg = 'New Token created, please update Channable Dashboard with this new token';
-        } else {
-            $msg = 'New Token created, please link your account using the auto update';
-        }
-
-        Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('channable')->__($msg));
         $this->_redirect('adminhtml/system_config/edit/section/channable');
     }
 

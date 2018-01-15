@@ -14,7 +14,7 @@
  * @category      Magmodules
  * @package       Magmodules_Channable
  * @author        Magmodules <info@magmodules.eu)
- * @copyright     Copyright (c) 2017 (http://www.magmodules.eu)
+ * @copyright     Copyright (c) 2018 (http://www.magmodules.eu)
  * @license       http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  *
  */
@@ -23,16 +23,25 @@ class Magmodules_Channable_Model_Adminhtml_System_Config_Source_Type
 {
 
     /**
+     * Options array
+     *
+     * @var array
+     */
+    public $options = null;
+
+    /**
      * @return array
      */
     public function toOptionArray()
     {
-        $type = array();
-        $type[] = array('value' => '', 'label' => Mage::helper('channable')->__('Disabled'));
-        $type[] = array('value' => 'fixed', 'label' => Mage::helper('channable')->__('Static'));
-        $type[] = array('value' => 'attribute', 'label' => Mage::helper('channable')->__('Use Attribute'));
+        if (!$this->options) {
+            $this->options = array(
+                array('value' => '', 'label' => Mage::helper('channable')->__('Disabled')),
+                array('value' => 'fixed', 'label' => Mage::helper('channable')->__('Static Values')),
+                array('value' => 'attribute', 'label' => Mage::helper('channable')->__('Use Attribute')),
+            );
+        }
 
-        return $type;
+        return $this->options;
     }
-
 }

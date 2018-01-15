@@ -14,7 +14,7 @@
  * @category      Magmodules
  * @package       Magmodules_Channable
  * @author        Magmodules <info@magmodules.eu)
- * @copyright     Copyright (c) 2017 (http://www.magmodules.eu)
+ * @copyright     Copyright (c) 2018 (http://www.magmodules.eu)
  * @license       http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  *
  */
@@ -23,6 +23,9 @@ class Magmodules_Channable_Block_Adminhtml_Config_Form_Field_Extra
     extends Mage_Adminhtml_Block_System_Config_Form_Field_Array_Abstract
 {
 
+    /**
+     * @var array
+     */
     protected $_renders = array();
 
     /**
