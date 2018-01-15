@@ -69,7 +69,7 @@ class Magmodules_Channable_Helper_Selftest extends Magmodules_Channable_Helper_D
                 }
             }
         } else {
-            $result[] = $this->getNotice('Catalog Product Flat is disabled', 'flatcatalog');
+            $result[] = $this->getNotice('Catalog Product Flat is disabled', '#flatcatalog');
         }
 
         $flatCategoy = Mage::getStoreConfig('catalog/frontend/flat_catalog_category');
