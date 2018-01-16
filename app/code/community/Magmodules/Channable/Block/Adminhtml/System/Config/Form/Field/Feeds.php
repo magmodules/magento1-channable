@@ -48,7 +48,8 @@ class Magmodules_Channable_Block_Adminhtml_System_Config_Form_Field_Feeds
                 );
 
                 $sHtml .= sprintf(
-                    '<tr><td>%s</td><td><a href="%s">%s</a></td><td><a href="%s" target="_blank">%s</a></td></tr>',
+                    '<tr><td>%s</td><td>%s</td><td><a href="%s">%s</a></td><td><a href="%s" target="_blank">%s</a></td></tr>',
+                    $store->getWebsite()->getName(),
                     $store->getName(),
                     $baseUrl . 'channable/feed/get/code/' . $token . '/store/' . $storeId . '/array/1',
                     $this->__('Preview'),
@@ -62,13 +63,18 @@ class Magmodules_Channable_Block_Adminhtml_System_Config_Form_Field_Feeds
             $html = $helper->__('No enabled feed(s) found or token missing');
         } else {
             $html = '<div class="grid">
-                         <table cellpadding="0" cellspacing="0" class="border" style="width:425px;">
-                            <tbody>
-                                <tr class="headings"><th>Store</th><th>Preview</th><th>Connect</th></tr>
-                            </tbody>
-                            ' . $sHtml . '
-                         </table>
-                      </div>';
+              <table cellpadding="0" cellspacing="0" class="border" style="width:425px;">
+               <tbody>
+                <tr class="headings">
+                 <th>' . $helper->__('Website') .'</th>
+                 <th>' . $helper->__('Store') .'</th>
+                 <th>' . $helper->__('Preview') .'</th>
+                 <th>' . $helper->__('Connect') .'</th>
+                </tr>
+               </tbody>
+               ' . $sHtml . '
+               </table>
+              </div>';
         }
 
         return sprintf(
