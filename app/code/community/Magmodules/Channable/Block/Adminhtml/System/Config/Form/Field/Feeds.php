@@ -37,14 +37,18 @@ class Magmodules_Channable_Block_Adminhtml_System_Config_Form_Field_Feeds
 
         if ($token) {
             foreach ($storeIds as $storeId) {
-                $baseUrl = Mage::app()->getStore($storeId)->getBaseUrl(Mage_Core_Model_Store::URL_TYPE_LINK);
+                $store = Mage::app()->getStore($storeId);
+
+                $baseUrl = $store->getBaseUrl(Mage_Core_Model_Store::URL_TYPE_LINK);
                 $channableFeed = $baseUrl . 'channable/feed/get/code/' . $token . '/store/' . $storeId . '/array/1';
-                $storeTitle = Mage::app()->getStore($storeId)->getName();
+                $websiteTitle = $store->getWebsite()->getName();
+                $storeTitle = $store->getName();
                 $url = 'https://app.channable.com/connect/magento.html?';
                 $url .= 'store_id=' . $storeId . '&url=' . $baseUrl . '&token=' . $token;
                 $msg = $this->__('Click to auto connect with Channable');
 
                 $sHtml .= '<tr>
+                 <td>' . $websiteTitle . '</td>
                  <td>' . $storeTitle . '</td>
                  <td><a href="' . $channableFeed . '">' . $this->__('Preview') . '</a></td>
                  <td><a href="' . $url . '" target="_blank">' . $msg . '</a></td>
@@ -56,9 +60,9 @@ class Magmodules_Channable_Block_Adminhtml_System_Config_Form_Field_Feeds
             $html = $helper->__('No enabled feed(s) found or token missing');
         } else {
             $html = '<div class="grid">
-                         <table cellpadding="0" cellspacing="0" class="border" style="width:425px;">
+                         <table cellpadding="0" cellspacing="0" class="border" style="width:500px;">
                             <tbody>
-                                <tr class="headings"><th>Store</th><th>Preview</th><th>Connect</th></tr>
+                                <tr class="headings"><th>Website</th><th>Store</th><th>Preview</th><th>Connect</th></tr>
                             </tbody>
                             ' . $sHtml . '
                          </table>
@@ -70,5 +74,4 @@ class Magmodules_Channable_Block_Adminhtml_System_Config_Form_Field_Feeds
             $element->getHtmlId(), $html
         );
     }
-
 }
