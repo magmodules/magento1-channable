@@ -64,17 +64,19 @@ class Magmodules_Channable_Block_Adminhtml_System_Config_Form_Field_Feeds
         } else {
             $html = '<div class="grid">
               <table cellpadding="0" cellspacing="0" class="border" style="width:425px;">
-               <tbody>
+               <thead>
                 <tr class="headings">
                  <th>' . $helper->__('Website') .'</th>
                  <th>' . $helper->__('Store') .'</th>
                  <th>' . $helper->__('Preview') .'</th>
                  <th>' . $helper->__('Connect') .'</th>
                 </tr>
-               </tbody>
+               </thead>
+               <tbody>
                ' . $sHtml . '
-               </table>
-              </div>';
+               </tbody>
+              </table>
+             </div>';
         }
 
         return sprintf(

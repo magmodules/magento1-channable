@@ -751,6 +751,11 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
                     $value = $attributetext;
                 }
                 break;
+            case 'float':
+                if (!empty($source) && isset($product[$source])) {
+                    $value = round(floatval($product[$source]));
+                }
+                break;
             default:
                 if (isset($product[$source])) {
                     $value = $product[$source];
@@ -983,11 +988,17 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
             $action = (!empty($attribute['action']) ? $attribute['action'] : '');
             $parent = (!empty($attribute['parent']) ? $attribute['parent'] : '');
             if (isset($attribute['source'])) {
-                $attributeModel = Mage::getModel('eav/entity_attribute')->loadByCode(
-                    'catalog_product',
-                    $attribute['source']
-                );
+                $attributeModel = Mage::getModel('eav/entity_attribute')
+                    ->loadByCode('catalog_product', $attribute['source']);
+
                 $type = $attributeModel->getFrontendInput();
+            }
+
+            if (!empty($attribute['label']) && ($attribute['label'] == 'manage_stock')) {
+                $type = 'boolean';
+            }
+            if (!empty($attribute['label']) && ($attribute['label'] == 'qty')) {
+                $type = 'float';
             }
 
             if (!empty($config['conf_fields'])) {
