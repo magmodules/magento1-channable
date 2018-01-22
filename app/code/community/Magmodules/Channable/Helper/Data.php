@@ -242,10 +242,8 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
             return $dataRow;
         }
 
-        if (!empty($value) || is_numeric($value)) {
-            $dataRow[$data['label']] = $value;
-            return $dataRow;
-        }
+        $dataRow[$data['label']] = $value;
+        return $dataRow;
     }
 
     /**
@@ -754,6 +752,12 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
             case 'float':
                 if (!empty($source) && isset($product[$source])) {
                     $value = round(floatval($product[$source]));
+                }
+                break;
+            case 'boolean':
+                $value = 0;
+                if (!empty($source) && isset($product[$source])) {
+                    $value = (int)$product[$source];
                 }
                 break;
             default:

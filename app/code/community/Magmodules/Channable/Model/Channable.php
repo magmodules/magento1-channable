@@ -483,11 +483,11 @@ class Magmodules_Channable_Model_Channable extends Magmodules_Channable_Model_Co
     {
         $stockData = array();
 
-        if (empty($productData['qty'])) {
+        if (!isset($productData['qty'])) {
             $stockData['qty'] = (string)'0';
         }
 
-        if (empty($productData['manage_stock'])) {
+        if (!isset($productData['manage_stock'])) {
             if ($product->getUseConfigManageStock()) {
                 $stockData['manage_stock'] = (string)$config['stock_manage'];
             } else {
