@@ -14,7 +14,7 @@
  * @category      Magmodules
  * @package       Magmodules_Channable
  * @author        Magmodules <info@magmodules.eu)
- * @copyright     Copyright (c) 2017 (http://www.magmodules.eu)
+ * @copyright     Copyright (c) 2018 (http://www.magmodules.eu)
  * @license       http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  *
  */
@@ -23,17 +23,26 @@ class Magmodules_Channable_Model_Adminhtml_System_Config_Source_Pricemodel
 {
 
     /**
+     * Options array
+     *
+     * @var array
+     */
+    public $options = null;
+
+    /**
      * @return array
      */
     public function toOptionArray()
     {
-        $type = array();
-        $type[] = array('value' => '', 'label' => Mage::helper('adminhtml')->__('Use default price'));
-        $type[] = array('value' => 'min', 'label' => Mage::helper('adminhtml')->__('Use minimum price'));
-        $type[] = array('value' => 'max', 'label' => Mage::helper('adminhtml')->__('Use maximum price'));
-        $type[] = array('value' => 'total', 'label' => Mage::helper('adminhtml')->__('Use total price'));
+        if (!$this->options) {
+            $this->options = array(
+                array('value' => '', 'label' => Mage::helper('adminhtml')->__('Use default price')),
+                array('value' => 'min', 'label' => Mage::helper('adminhtml')->__('Use minimum price')),
+                array('value' => 'max', 'label' => Mage::helper('adminhtml')->__('Use maximum price')),
+                array('value' => 'total', 'label' => Mage::helper('adminhtml')->__('Use total price')),
+            );
+        }
 
-        return $type;
+        return $this->options;
     }
-
 }

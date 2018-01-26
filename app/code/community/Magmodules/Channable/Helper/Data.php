@@ -14,13 +14,16 @@
  * @category      Magmodules
  * @package       Magmodules_Channable
  * @author        Magmodules <info@magmodules.eu)
- * @copyright     Copyright (c) 2017 (http://www.magmodules.eu)
+ * @copyright     Copyright (c) 2018 (http://www.magmodules.eu)
  * @license       http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  *
  */
 
 class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
 {
+
+    const LOG_FILENAME = 'channable.log';
+    const FORCE_LOG = true;
 
     /**
      * @param $path
@@ -30,10 +33,10 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     public function getStoreIds($path)
     {
         $storeIds = array();
-        foreach (Mage::app()->getStores() as $store) {
-            $storeId = Mage::app()->getStore($store)->getId();
-            if (Mage::getStoreConfig($path, $storeId)) {
-                $storeIds[] = $storeId;
+        $stores = Mage::getModel('core/store')->getCollection();
+        foreach ($stores as $store) {
+            if (Mage::getStoreConfig($path, $store->getId())) {
+                $storeIds[] = $store->getId();
             }
         }
 
@@ -50,6 +53,7 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getProductDataRow($product, $config, $parent, $parentAttributes)
     {
+
         $fields = $config['field'];
         $data = array();
 
@@ -149,7 +153,7 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
      * @param        Mage_Catalog_Model_Product $parent
      * @param                                   $parentAttributes
      *
-     * @return string
+     * @return mixed
      */
     public function getAttributeValue($field, $product, $config, $actions = '', $parent, $parentAttributes)
     {
@@ -201,7 +205,7 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
                 $value = $this->getProductCategories($productData, $config);
                 break;
             case 'category_ids':
-                $value = $this->getProductCategoryIds($productData, $config);
+                $value = $this->getProductCategoryIds($productData);
                 break;
             default:
                 if (!empty($data['source'])) {
@@ -224,7 +228,7 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
             }
         }
 
-        if ((isset($actions)) && (!empty($value))) {
+        if ((isset($actions)) && (!empty($value)) && !is_array($value)) {
             $value = $this->cleanData($value, $actions);
         }
 
@@ -281,16 +285,20 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
             }
         }
 
-        if (!empty($parent) && !empty($url)) {
-            if (!empty($parentAttributes[$parent->getEntityId()])) {
-                $storeId = $config['store_id'];
-                $pId = $product->getId();
+        if (!empty($config['url_suffix'])) {
+            $url = $url . '?' . $config['url_suffix'];
+        }
+
+        if (!empty($parent) && !empty($config['conf_switch_urls'])) {
+            if ($parent->getTypeId() == 'configurable') {
                 $productAttributeOptions = $parentAttributes[$parent->getEntityId()];
                 $urlExtra = '';
                 foreach ($productAttributeOptions as $productAttribute) {
-                    $attCode = $productAttribute['attribute_code'];
-                    $id = Mage::getResourceModel('catalog/product')->getAttributeRawValue($pId, $attCode, $storeId);
-                    if ($id > 0) {
+                    if ($id = Mage::getResourceModel('catalog/product')->getAttributeRawValue(
+                        $product->getId(),
+                        $productAttribute['attribute_code'], $config['store_id']
+                    )
+                    ) {
                         $urlExtra .= $productAttribute['attribute_id'] . '=' . $id . '&';
                     }
                 }
@@ -324,7 +332,6 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
             }
 
             $productImage = $imageModel->getUrl();
-
             return (string)$productImage;
         } else {
             $image = '';
@@ -337,7 +344,7 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
                     $mediaData = $product->getData($mediaAtt);
                     if (!empty($mediaData)) {
                         if ($mediaData != 'no_selection') {
-                            $image = $config['media_image_url'] . $mediaData;
+                            $image = $this->checkImagePath($mediaData, $config['media_image_url']);
                             $imageData['image'][$mediaAtt] = $image;
                         }
                     }
@@ -345,21 +352,21 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
             } else {
                 if ($product->getThumbnail()) {
                     if ($product->getThumbnail() != 'no_selection') {
-                        $image = $config['media_image_url'] . $product->getThumbnail();
+                        $image = $this->checkImagePath($product->getThumbnail(), $config['media_image_url']);
                         $imageData['image']['thumbnail'] = $image;
                     }
                 }
 
                 if ($product->getSmallImage()) {
                     if ($product->getSmallImage() != 'no_selection') {
-                        $image = $config['media_image_url'] . $product->getSmallImage();
+                        $image = $this->checkImagePath($product->getSmallImage(), $config['media_image_url']);
                         $imageData['image']['small_image'] = $image;
                     }
                 }
 
                 if ($product->getImage()) {
                     if ($product->getImage() != 'no_selection') {
-                        $image = $config['media_image_url'] . $product->getImage();
+                        $image = $this->checkImagePath($product->getImage(), $config['media_image_url']);
                         $imageData['image']['image'] = $image;
                     }
                 }
@@ -367,29 +374,25 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
 
             if (!empty($config['images'])) {
                 $imageData['image_link'] = $image;
-                $container = new Varien_Object(
-                    array(
-                        'attribute' => new Varien_Object(array('id' => $config['media_gallery_id']))
-                    )
-                );
+                $container = new Varien_Object(array('attribute' => new Varien_Object(array('id' => $config['media_gallery_id']))));
                 $imgProduct = new Varien_Object(array('id' => $product->getId(), 'store_id' => $config['store_id']));
-                $gallery = Mage::getResourceModel('catalog/product_attribute_backend_media')->loadGallery(
-                    $imgProduct,
-                    $container
-                );
-
+                $gallery = Mage::getResourceModel('catalog/product_attribute_backend_media')
+                    ->loadGallery($imgProduct, $container);
                 $i = 1;
                 usort(
                     $gallery, function ($a, $b) {
                     return $a['position_default'] > $b['position_default'];
                 }
                 );
-                foreach ($gallery as $galleryImage) {
-                    if ($galleryImage['disabled'] == 0) {
-                        $imageData['image']['all']['image_' . $i] = $config['media_image_url'] . $galleryImage['file'];
-                        $imageData['image']['last'] = $config['media_image_url'] . $galleryImage['file'];
+                foreach ($gallery as $galImage) {
+                    if ($galImage['disabled'] == 0) {
+                        $imageData['image']['all']['image_' . $i] = $this->checkImagePath($galImage['file'],
+                            $config['media_image_url']);
+                        $imageData['image']['last'] = $this->checkImagePath($galImage['file'],
+                            $config['media_image_url']);
                         if ($i == 1) {
-                            $imageData['image']['first'] = $config['media_image_url'] . $galleryImage['file'];
+                            $imageData['image']['first'] = $this->checkImagePath($galImage['file'],
+                                $config['media_image_url']);
                         }
 
                         $i++;
@@ -404,6 +407,25 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
                     return $image;
                 }
             }
+        }
+    }
+
+    /**
+     * @param $path
+     * @param $mediaUrl
+     *
+     * @return string
+     */
+    public function checkImagePath($path, $mediaUrl)
+    {
+        if (substr($path, 0, 4) === 'http') {
+            return $path;
+        }
+
+        if ($path[0] != '/') {
+            return $mediaUrl . '/' . $path;
+        } else {
+            return $mediaUrl . $path;
         }
     }
 
@@ -501,10 +523,8 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         if (!empty($config['price_scope'])) {
-            $price = Mage::getResourceModel('catalog/product')->getAttributeRawValue(
-                $product->getId(), 'price',
-                $config['store_id']
-            );
+            $price = Mage::getResourceModel('catalog/product')
+                ->getAttributeRawValue($product->getId(), 'price', $config['store_id']);
         } else {
             $price = $product->getPrice();
         }
@@ -547,10 +567,15 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
         $priceData['final_price_clean'] = $price;
         $priceData['price'] = number_format(($price * $priceMarkup), 2, '.', '') . $currency;
 
-        $minPrice = Mage::helper('tax')->getPrice($product, $product->getMinPrice(), $taxParam);
-        $maxPrice = Mage::helper('tax')->getPrice($product, $product->getMaxPrice(), $taxParam);
-        $priceData['min_price'] = number_format(($minPrice * $priceMarkup), 2, '.', '') . $currency;
-        $priceData['max_price'] = number_format(($maxPrice * $priceMarkup), 2, '.', '') . $currency;
+        if ($product->getMinPrice() !== null) {
+            $minPrice = Mage::helper('tax')->getPrice($product, $product->getMinPrice(), $taxParam);
+            $priceData['min_price'] = number_format(($minPrice * $priceMarkup), 2, '.', '') . $currency;
+        }
+
+        if ($product->getMaxPrice() !== null) {
+            $maxPrice = Mage::helper('tax')->getPrice($product, $product->getMaxPrice(), $taxParam);
+            $priceData['max_price'] = number_format(($maxPrice * $priceMarkup), 2, '.', '') . $currency;
+        }
 
         if (isset($salesPrice)) {
             $priceData['sales_price'] = number_format(($salesPrice * $priceMarkup), 2, '.', '') . $currency;
@@ -572,11 +597,8 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         if ($config['base_currency_code'] != $config['currency']) {
-            $exchangeRate = Mage::helper('directory')->currencyConvert(
-                1,
-                $config['base_currency_code'],
-                $config['currency']
-            );
+            $exchangeRate = Mage::helper('directory')
+                ->currencyConvert(1, $config['base_currency_code'], $config['currency']);
             $markup = ($markup * $exchangeRate);
         }
 
@@ -664,11 +686,9 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getProductBundle($product)
     {
-
         if ($product->getTypeId() == 'bundle') {
             return 'true';
         }
-
         return false;
     }
 
@@ -694,13 +714,13 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * @param        Mage_Catalog_Model_Product $product
-     * @param                                   $data
-     * @param string                            $config
+     * @param Mage_Catalog_Model_Product $product
+     * @param                            $data
+     * @param array                      $config
      *
      * @return string
      */
-    public function getProductData($product, $data, $config = '')
+    public function getProductData($product, $data, $config = array())
     {
         $type = $data['type'];
         $source = $data['source'];
@@ -715,9 +735,8 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
                 }
                 break;
             case 'select':
-                $attributetext = $product->getAttributeText($source);
-                if (!empty($attributetext)) {
-                    $value = $attributetext;
+                if (!empty($source)) {
+                    $value = $product->getAttributeText($source);
                 }
                 break;
             case 'multiselect':
@@ -728,6 +747,17 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
                 }
                 if (!empty($attributetext)) {
                     $value = $attributetext;
+                }
+                break;
+            case 'float':
+                if (!empty($source) && isset($product[$source])) {
+                    $value = round(floatval($product[$source]));
+                }
+                break;
+            case 'boolean':
+                $value = 0;
+                if (!empty($source) && isset($product[$source])) {
+                    $value = (int)$product[$source];
                 }
                 break;
             default:
@@ -752,8 +782,9 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
 
     /**
      * @param Mage_Catalog_Model_Product $product
+     * @param                            $bundleStock
      *
-     * @return string
+     * @return mixed|null
      */
     public function getStock($product, $bundleStock)
     {
@@ -817,16 +848,6 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * @param Mage_Catalog_Model_Product $product
-     *
-     * @return string
-     */
-    public function getProductCategoryIds($product)
-    {
-        return implode(',', $product->getCategoryIds());
-    }
-
-    /**
      * @param $data
      * @param $sort
      *
@@ -838,6 +859,16 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
         usort($data, create_function('$a,$b', $code));
 
         return array_reverse($data);
+    }
+
+    /**
+     * @param Mage_Catalog_Model_Product $product
+     *
+     * @return string
+     */
+    public function getProductCategoryIds($product)
+    {
+        return implode(',', $product->getCategoryIds());
     }
 
     /**
@@ -949,23 +980,29 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * @param        $attributes
-     * @param string $config
+     * @param       $attributes
+     * @param array $config
      *
      * @return mixed
      */
-    public function addAttributeData($attributes, $config = '')
+    public function addAttributeData($attributes, $config = array())
     {
         foreach ($attributes as $key => $attribute) {
             $type = (!empty($attribute['type']) ? $attribute['type'] : '');
             $action = (!empty($attribute['action']) ? $attribute['action'] : '');
             $parent = (!empty($attribute['parent']) ? $attribute['parent'] : '');
             if (isset($attribute['source'])) {
-                $attributeModel = Mage::getModel('eav/entity_attribute')->loadByCode(
-                    'catalog_product',
-                    $attribute['source']
-                );
+                $attributeModel = Mage::getModel('eav/entity_attribute')
+                    ->loadByCode('catalog_product', $attribute['source']);
+
                 $type = $attributeModel->getFrontendInput();
+            }
+
+            if (!empty($attribute['label']) && ($attribute['label'] == 'manage_stock')) {
+                $type = 'boolean';
+            }
+            if (!empty($attribute['label']) && ($attribute['label'] == 'qty')) {
+                $type = 'float';
             }
 
             if (!empty($config['conf_fields'])) {
@@ -996,7 +1033,6 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     public function getCategoryData($config, $storeId)
     {
         $defaultAttributes = array('entity_id', 'path', 'name', 'level');
-
         $attributes = $defaultAttributes;
 
         if (!empty($config['category_custom'])) {
@@ -1025,12 +1061,14 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         if (empty($e)) {
+            /** @var Mage_Catalog_Model_Resource_Category_Collection $categories */
             $categories = Mage::getModel('catalog/category')
                 ->setStoreId($storeId)
                 ->getCollection()
                 ->addAttributeToSelect($attributes)
                 ->addFieldToFilter('is_active', array('eq' => 1));
         } else {
+            /** @var Mage_Catalog_Model_Resource_Category_Collection $categories */
             $categories = Mage::getModel('catalog/category')
                 ->setStoreId($storeId)
                 ->getCollection()
@@ -1117,37 +1155,54 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * @param Mage_Catalog_Model_Product $product
-     * @param                            $config
+     * @param $products
+     * @param $config
      *
-     * @return bool
+     * @return array
      */
-    public function getParentData($product, $config)
+    public function getParentsFromCollection($products, $config)
     {
-        if (!empty($config['conf_enabled'])) {
-            if (($product['type_id'] == 'simple')) {
-                $configIds = Mage::getModel('catalog/product_type_configurable')
-                    ->getParentIdsByChild($product->getId());
-                $groupIds = Mage::getResourceSingleton('catalog/product_link')->getParentIdsByChild(
-                    $product->getId(),
-                    Mage_Catalog_Model_Product_Link::LINK_TYPE_GROUPED
-                );
-                if ($configIds) {
-                    return $configIds[0];
-                }
+        $ids = array();
+        if (empty($config['conf_enabled'])) {
+            return $ids;
+        }
 
-                if ($groupIds) {
-                    return $groupIds[0];
-                }
+        foreach ($products as $product) {
+            if ($parentId = $this->getParentData($product)) {
+                $ids[$product->getEntityId()] = $parentId;
             }
         }
 
-        return false;
+        return $ids;
     }
 
     /**
-     * @param                            $config
-     * @param Mage_Catalog_Model_Product $products
+     * @param Mage_Catalog_Model_Product $product
+     *
+     * @return array
+     */
+    public function getParentData($product)
+    {
+        if (($product['type_id'] == 'simple')) {
+            $configIds = Mage::getModel('catalog/product_type_configurable')->getParentIdsByChild($product->getId());
+            if ($configIds) {
+                return $configIds;
+            }
+
+            $groupIds = Mage::getResourceSingleton('catalog/product_link')->getParentIdsByChild(
+                $product->getId(),
+                Mage_Catalog_Model_Product_Link::LINK_TYPE_GROUPED
+            );
+
+            if ($groupIds) {
+                return $groupIds;
+            }
+        }
+    }
+
+    /**
+     * @param $config
+     * @param $products
      *
      * @return array
      */
@@ -1252,11 +1307,8 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     {
         if ($dir) {
             $dir = Mage::getBaseDir('app') . DS . 'code' . DS . 'local' . DS . 'Magmodules' . DS . $dir;
-
             return file_exists($dir);
         }
-
-        return false;
     }
 
     /**
@@ -1267,14 +1319,12 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     public function checkFlatCatalog($attributes)
     {
         $nonFlatAttributes = array();
-        $skipCheck = array('sku','category_ids');
+        $skipCheck = array('sku', 'category_ids');
         foreach ($attributes as $key => $attribute) {
             if (!empty($attribute['source'])) {
                 if (($attribute['source'] != 'entity_id') && !in_array($attribute['source'], $skipCheck)) {
-                    $_attribute = Mage::getModel('eav/entity_attribute')->loadByCode(
-                        'catalog_product',
-                        $attribute['source']
-                    );
+                    $_attribute = Mage::getModel('eav/entity_attribute')
+                        ->loadByCode('catalog_product', $attribute['source']);
                     if ($_attribute->getUsedInProductListing() == 0) {
                         if ($_attribute->getId()) {
                             $nonFlatAttributes[$_attribute->getId()] = $_attribute->getFrontendLabel();
@@ -1288,15 +1338,30 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * @param $storeId
+     *
+     * @return mixed|string
+     */
+    public function getProductUrlSuffix($storeId)
+    {
+        $suffix = Mage::getStoreConfig('catalog/seo/product_url_suffix', $storeId);
+        if (!empty($suffix)) {
+            if ((strpos($suffix, '.') === false) && ($suffix != '/')) {
+                $suffix = '.' . $suffix;
+            }
+        }
+
+        return $suffix;
+    }
+
+    /**
      * @return array
      */
     public function getMediaAttributes()
     {
         $mediaTypes = array();
-        $attributes = Mage::getResourceModel('catalog/product_attribute_collection')->addFieldToFilter(
-            'frontend_input',
-            'media_image'
-        );
+        $attributes = Mage::getResourceModel('catalog/product_attribute_collection')
+            ->addFieldToFilter('frontend_input', 'media_image');
         foreach ($attributes as $attribute) {
             $mediaTypes[] = $attribute->getData('attribute_code');
         }
@@ -1316,23 +1381,6 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         return $storeId;
-    }
-
-    /**
-     * @param $storeId
-     *
-     * @return string
-     */
-    public function getProductUrlSuffix($storeId)
-    {
-        $suffix = Mage::getStoreConfig('catalog/seo/product_url_suffix', $storeId);
-        if (!empty($suffix)) {
-            if (($suffix[0] != '.') && ($suffix != '/')) {
-                $suffix = '.' . $suffix;
-            }
-        }
-
-        return $suffix;
     }
 
     /**
@@ -1369,5 +1417,50 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         return $collection->getFirstItem()->getValue();
+    }
+
+    /**
+     * @param $page
+     * @param $pages
+     * @param $processed
+     */
+    public function addLog($page, $pages, $processed)
+    {
+        $memoryUsage = memory_get_usage(true);
+        if ($memoryUsage < 1024) {
+            $usage = $memoryUsage . ' b';
+        } elseif ($memoryUsage < 1048576) {
+            $usage = round($memoryUsage / 1024, 2) . ' KB';
+        } else {
+            $usage = round($memoryUsage / 1048576, 2) . ' MB';
+        }
+
+        $msg = sprintf(
+            'Page: %s/%s | Memory Usage: %s | Products: %s',
+            $page,
+            $pages,
+            $usage,
+            $processed
+        );
+
+        Mage::log($msg, null, self::LOG_FILENAME, self::FORCE_LOG);
+    }
+
+    /**
+     * @param $timeStart
+     *
+     * @return float|string
+     */
+    public function getTimeUsage($timeStart)
+    {
+
+        $time = round((microtime(true) - $timeStart));
+        if ($time > 120) {
+            $time = round($time / 60, 1) . ' ' . $this->__('minutes');
+        } else {
+            $time = round($time) . ' ' . $this->__('seconds');
+        }
+
+        return $time;
     }
 }

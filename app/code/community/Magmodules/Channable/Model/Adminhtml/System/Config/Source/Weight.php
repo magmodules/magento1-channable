@@ -14,7 +14,7 @@
  * @category      Magmodules
  * @package       Magmodules_Channable
  * @author        Magmodules <info@magmodules.eu)
- * @copyright     Copyright (c) 2017 (http://www.magmodules.eu)
+ * @copyright     Copyright (c) 2018 (http://www.magmodules.eu)
  * @license       http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  *
  */
@@ -23,17 +23,26 @@ class Magmodules_Channable_Model_Adminhtml_System_Config_Source_Weight
 {
 
     /**
+     * Options array
+     *
+     * @var array
+     */
+    public $options = null;
+
+    /**
      * @return array
      */
     public function toOptionArray()
     {
-        $type = array();
-        $type[] = array('value' => 'lb', 'label' => Mage::helper('adminhtml')->__('Pounds (lb)'));
-        $type[] = array('value' => 'oz', 'label' => Mage::helper('adminhtml')->__('Ounces (oz)'));
-        $type[] = array('value' => 'g', 'label' => Mage::helper('adminhtml')->__('Grams (g)'));
-        $type[] = array('value' => 'kg', 'label' => Mage::helper('adminhtml')->__('Kilograms (kg)'));
+        if (!$this->options) {
+            $this->options = array(
+                array('value' => 'lb', 'label' => Mage::helper('adminhtml')->__('Pounds (lb)')),
+                array('value' => 'oz', 'label' => Mage::helper('adminhtml')->__('Ounces (oz)')),
+                array('value' => 'g', 'label' => Mage::helper('adminhtml')->__('Grams (g)')),
+                array('value' => 'kg', 'label' => Mage::helper('adminhtml')->__('Kilograms (kg)')),
+            );
+        }
 
-        return $type;
+        return $this->options;
     }
-
 }

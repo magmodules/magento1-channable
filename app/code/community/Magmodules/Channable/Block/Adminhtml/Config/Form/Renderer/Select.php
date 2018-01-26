@@ -14,7 +14,7 @@
  * @category      Magmodules
  * @package       Magmodules_Channable
  * @author        Magmodules <info@magmodules.eu)
- * @copyright     Copyright (c) 2017 (http://www.magmodules.eu)
+ * @copyright     Copyright (c) 2018 (http://www.magmodules.eu)
  * @license       http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  *
  */
@@ -107,7 +107,7 @@ class Magmodules_Channable_Block_Adminhtml_Config_Form_Renderer_Select extends M
             }
 
             if (is_array($value)) {
-                $html .= '<optgroup label="' . $label . '">';
+                $html .= '<optgroup label="' . htmlspecialchars($label, ENT_QUOTES | ENT_HTML5) . '">';
                 foreach ($value as $keyGroup => $optionGroup) {
                     if (!is_array($optionGroup)) {
                         $optionGroup = array(

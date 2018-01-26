@@ -14,14 +14,14 @@
   ~ @category      Magmodules
   ~ @package       Magmodules_Channable
   ~ @author        Magmodules <info@magmodules.eu)
-  ~ @copyright     Copyright (c) 2017 (http://www.magmodules.eu)
+  ~ @copyright    Copyright (c) 2018 (http://www.magmodules.eu)
   ~ @license       http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
   ~
   -->
 <config>
     <modules>
         <Magmodules_Channable>
-            <version>1.5.5</version>
+            <version>1.6.0</version>
         </Magmodules_Channable>
     </modules>
     <global>
@@ -90,6 +90,13 @@
                 </magmodules_channable>
             </modules>
         </translate>
+        <layout>
+            <updates>
+                <channable>
+                    <file>magmodules_channable.xml</file>
+                </channable>
+            </updates>
+        </layout>
     </adminhtml>
     <default>
         <channable>

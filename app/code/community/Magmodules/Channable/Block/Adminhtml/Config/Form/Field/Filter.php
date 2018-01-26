@@ -14,7 +14,7 @@
  * @category      Magmodules
  * @package       Magmodules_Channable
  * @author        Magmodules <info@magmodules.eu)
- * @copyright     Copyright (c) 2017 (http://www.magmodules.eu)
+ * @copyright     Copyright (c) 2018 (http://www.magmodules.eu)
  * @license       http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  *
  */
@@ -23,6 +23,9 @@ class Magmodules_Channable_Block_Adminhtml_Config_Form_Field_Filter
     extends Mage_Adminhtml_Block_System_Config_Form_Field_Array_Abstract
 {
 
+    /**
+     * @var array
+     */
     protected $_renders = array();
 
     /**
@@ -50,6 +53,16 @@ class Magmodules_Channable_Block_Adminhtml_Config_Form_Field_Filter
             Mage::getModel('channable/adminhtml_system_config_source_conditions')->toOptionArray()
         );
 
+        $rendererTypes = $layout->createBlock(
+            'channable/adminhtml_config_form_renderer_select',
+            '',
+            array('is_render_to_js_template' => true)
+        );
+
+        $rendererTypes->setOptions(
+            Mage::getModel('channable/adminhtml_system_config_source_producttypes')->toOptionArray()
+        );
+
         $this->addColumn(
             'attribute', array(
                 'label'    => Mage::helper('channable')->__('Attribute'),
@@ -73,8 +86,18 @@ class Magmodules_Channable_Block_Adminhtml_Config_Form_Field_Filter
             )
         );
 
+        $this->addColumn(
+            'product_type', array(
+                'label'    => Mage::helper('channable')->__('Apply To'),
+                'style'    => 'width:150px',
+                'renderer' => $rendererTypes
+            )
+        );
+
+
         $this->_renders['attribute'] = $rendererAttributes;
         $this->_renders['condition'] = $rendererConditions;
+        $this->_renders['product_type'] = $rendererTypes;
 
         $this->_addAfter = false;
         $this->_addButtonLabel = Mage::helper('channable')->__('Add Filter');

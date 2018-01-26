@@ -14,7 +14,7 @@
  * @category      Magmodules
  * @package       Magmodules_Channable
  * @author        Magmodules <info@magmodules.eu)
- * @copyright     Copyright (c) 2017 (http://www.magmodules.eu)
+ * @copyright     Copyright (c) 2018 (http://www.magmodules.eu)
  * @license       http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  *
  */
@@ -23,27 +23,43 @@ class Magmodules_Channable_Model_Adminhtml_System_Config_Source_Mainimage
 {
 
     /**
+     * Options array
+     *
+     * @var array
+     */
+    public $options = null;
+
+    /**
      * @return array
      */
     public function toOptionArray()
     {
-        $attributes = Mage::getResourceModel('catalog/product_attribute_collection')->addFieldToFilter(
-            'frontend_input',
-            'media_image'
-        );
-        $type = array();
-        $type[] = array('value' => '', 'label' => Mage::helper('channable')->__('Use default'));
-        foreach ($attributes as $attribute) {
-            $type[] = array(
-                'value' => $attribute->getData('attribute_code'),
-                'label' => str_replace("'", "", $attribute->getData('frontend_label'))
+        if (!$this->options) {
+            $attributes = Mage::getResourceModel('catalog/product_attribute_collection')
+                ->addFieldToFilter('frontend_input', 'media_image');
+
+            $this->options[] = array(
+                'value' => '',
+                'label' => Mage::helper('channable')->__('Use default')
+            );
+
+            foreach ($attributes as $attribute) {
+                $this->options[] = array(
+                    'value' => $attribute->getData('attribute_code'),
+                    'label' => str_replace("'", "", $attribute->getData('frontend_label'))
+                );
+            }
+
+            $this->options[] = array(
+                'value' => 'first',
+                'label' => Mage::helper('channable')->__('First Image')
+            );
+            $this->options[] = array(
+                'value' => 'last',
+                'label' => Mage::helper('channable')->__('Last Image')
             );
         }
 
-        $type[] = array('value' => 'first', 'label' => Mage::helper('channable')->__('First Image'));
-        $type[] = array('value' => 'last', 'label' => Mage::helper('channable')->__('Last Image'));
-
-        return $type;
+        return $this->options;
     }
-
 }

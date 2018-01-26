@@ -14,7 +14,7 @@
  * @category      Magmodules
  * @package       Magmodules_Channable
  * @author        Magmodules <info@magmodules.eu)
- * @copyright     Copyright (c) 2017 (http://www.magmodules.eu)
+ * @copyright     Copyright (c) 2018 (http://www.magmodules.eu)
  * @license       http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  *
  */
@@ -35,12 +35,11 @@ class Magmodules_Channable_Model_Adminhtml_System_Config_Backend_Design_Filter
                 $value = $this->orderData($value, 'attribute');
                 foreach ($value as $key => $field) {
                     if (!empty($field['attribute']) && !empty($field['condition'])) {
-                        $attribute = Mage::getModel('eav/entity_attribute')->loadByCode(
-                            'catalog_product',
-                            $field['attribute']
-                        );
+                        $attribute = Mage::getModel('eav/entity_attribute')
+                            ->loadByCode('catalog_product', $field['attribute']);
                         $value[$key]['attribute'] = $field['attribute'];
                         $value[$key]['condition'] = $field['condition'];
+                        $value[$key]['product_type'] = $field['product_type'];
                         $value[$key]['value'] = $field['value'];
                         $value[$key]['type'] = $attribute->getFrontendInput();
                     } else {

@@ -14,7 +14,7 @@
   ~ @category      Magmodules
   ~ @package       Magmodules_Channable
   ~ @author        Magmodules <info@magmodules.eu)
-  ~ @copyright     Copyright (c) 2017 (http://www.magmodules.eu)
+  ~ @copyright    Copyright (c) 2018 (http://www.magmodules.eu)
   ~ @license       http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
   ~
   -->
@@ -506,7 +506,7 @@
                     </fields>
                 </data>
                 <advanced translate="label" module="channable">
-                    <label>Products - Extra data fields &amp; Shipping</label>
+                    <label>Products - Extra Fields &amp; Shipping Price</label>
                     <frontend_type>text</frontend_type>
                     <sort_order>5</sort_order>
                     <show_in_default>1</show_in_default>
@@ -515,7 +515,7 @@
                     <expanded>1</expanded>
                     <fields>
                         <note translate="label">
-                            <label><![CDATA[We recommend adding as many attributes as possible to the Channable feed as this will greatly improve the quality of your data. Enter the Shipping Price by using the designated extra field.]]></label>
+                            <label><![CDATA[We recommend adding as many attributes as possible to the Channable feed using the extra Fields, this will greatly improve the quality of your data. To use an external/other value for the stock information, set the custom attribute with QTY and/or Manage_Stock as field title to overwrite the default QTY and/or Manage Stock values. Enter the Shipping Price per country by product weight or product price with the designated shipping calculation table with a from/to and cost value.]]></label>
                             <frontend_model>channable/adminhtml_system_config_form_field_note</frontend_model>
                             <sort_order>1</sort_order>
                             <show_in_default>1</show_in_default>
@@ -523,7 +523,7 @@
                             <show_in_store>1</show_in_store>
                         </note>
                         <extra_heading translate="label">
-                            <label>The Additional Fields</label>
+                            <label>Extra Fields</label>
                             <frontend_model>channable/adminhtml_system_config_form_field_heading</frontend_model>
                             <sort_order>30</sort_order>
                             <show_in_default>1</show_in_default>
@@ -531,7 +531,7 @@
                             <show_in_store>1</show_in_store>
                         </extra_heading>
                         <extra>
-                            <label>The Additional Fields</label>
+                            <label>Extra Fields</label>
                             <frontend_model>channable/adminhtml_config_form_field_extra</frontend_model>
                             <backend_model>channable/adminhtml_system_config_backend_design_extra</backend_model>
                             <sort_order>32</sort_order>
@@ -624,6 +624,7 @@
                             <depends>
                                 <category_enabled>1</category_enabled>
                             </depends>
+                            <comment><![CDATA[Include or Exclude products based on the category.<br><strong><br>Note for Include:</strong><br>Simple products within a bundled, configurable or grouped product are treated as own entities, so these should also be present in the included categories.<br><br><strong>Note for Exclude: </strong><br>Exclude the products from these categories. Products that are available within different categories need to be excluded from all of the categories they are assigned to.]]></comment>
                         </categories>
                         <stock_heading translate="label">
                             <label>Exclude Products by Stock level</label>
@@ -663,7 +664,7 @@
                     </fields>
                 </filter>
                 <server translate="label" module="channable">
-                    <label>Overwrite the server settings</label>
+                    <label>Advanced</label>
                     <frontend_type>text</frontend_type>
                     <sort_order>7</sort_order>
                     <show_in_default>1</show_in_default>
@@ -671,11 +672,19 @@
                     <show_in_store>1</show_in_store>
                     <expanded>1</expanded>
                     <fields>
+                        <server_heading translate="label">
+                            <label>Overwrite Server Settings</label>
+                            <frontend_model>channable/adminhtml_system_config_form_field_heading</frontend_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </server_heading>
                         <overwrite translate="label">
                             <label>Enabled</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>21</sort_order>
+                            <sort_order>2</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -684,7 +693,7 @@
                         <memory_limit translate="label">
                             <label>The Memory Limit</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>22</sort_order>
+                            <sort_order>3</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -696,7 +705,7 @@
                         <max_execution_time translate="label">
                             <label>The Max Execution Time</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>23</sort_order>
+                            <sort_order>4</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -705,12 +714,56 @@
                             </depends>
                             <comment><![CDATA[This overwrites the maximum time in seconds a script is allowed to run before it is terminated by the parser, eg: 300 (for 5 minutes).]]></comment>
                         </max_execution_time>
+                        <flat_heading translate="label">
+                            <label>Flat Catalog</label>
+                            <frontend_model>channable/adminhtml_system_config_form_field_heading</frontend_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </flat_heading>
+                        <bypass_flat translate="label">
+                            <label>Bypass Flat Product Tables</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>11</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <comment><![CDATA[Bypass Flat catalog tables. Will result in higher resource usage as this will bypass the flat catalog and product index tables.]]></comment>
+                        </bypass_flat>
+                        <selftest_heading translate="label">
+                            <label>Selftest</label>
+                            <frontend_model>channable/adminhtml_system_config_form_field_heading</frontend_model>
+                            <sort_order>50</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </selftest_heading>
+                        <test_button translate="label">
+                            <label>Perform a self test to check your setup on errors.</label>
+                            <frontend_type>button</frontend_type>
+                            <frontend_model>channable/adminhtml_system_config_form_field_button</frontend_model>
+                            <sort_order>51</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </test_button>
+                        <test_result translate="label">
+                            <label></label>
+                            <frontend_type>button</frontend_type>
+                            <frontend_model>channable/adminhtml_system_config_form_field_result</frontend_model>
+                            <sort_order>52</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </test_result>
                     </fields>
                 </server>
                 <settings translate="label" module="channable">
                     <label>Feeds - Available</label>
                     <frontend_type>text</frontend_type>
-                    <sort_order>8</sort_order>
+                    <sort_order>9</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
