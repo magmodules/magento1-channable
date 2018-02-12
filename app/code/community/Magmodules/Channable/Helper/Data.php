@@ -949,12 +949,20 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     public function getConfigurableAttributesAsArray($parents, $config)
     {
         $configurableAttributes = array();
-        if (!empty($config['conf_switch_urls'])) {
-            foreach ($parents as $parent) {
-                if ($parent->getTypeId() == 'configurable') {
-                    $configurableAttributes[$parent->getEntityId()] = $parent->getTypeInstance(true)
-                        ->getConfigurableAttributesAsArray($parent);
-                }
+
+        if (empty($parents)) {
+            return $configurableAttributes;
+        }
+
+        if (empty($config['conf_switch_urls'])) {
+            return $configurableAttributes;
+
+        }
+
+        foreach ($parents as $parent) {
+            if ($parent->getTypeId() == 'configurable') {
+                $configurableAttributes[$parent->getEntityId()] = $parent->getTypeInstance(true)
+                    ->getConfigurableAttributesAsArray($parent);
             }
         }
 
@@ -1211,6 +1219,10 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
         $typePrices = array();
         $confEnabled = $config['conf_enabled'];
         $simplePrice = $config['simple_price'];
+
+        if (empty($products)) {
+            return $typePrices;
+        }
 
         if (!empty($confEnabled) && empty($simplePrice)) {
             foreach ($products as $product) {
