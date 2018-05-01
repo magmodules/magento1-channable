@@ -35,6 +35,12 @@ class Magmodules_Channable_Helper_Selftest extends Magmodules_Channable_Helper_D
         /** @var Magmodules_Channable_Model_Channable $model */
         $model = Mage::getModel("channable/channable");
 
+        if (version_compare(PHP_VERSION, '5.4.0') >= 0) {
+            $result[] = $this->getPass('Compatible PHP version: ' . PHP_VERSION);
+        } else {
+            $result[] = $this->getFail('Module requires PHP version >= 5.4, current version: ' . PHP_VERSION);
+        }
+
         $enabled = Mage::getStoreConfig('channable/connect/enabled');
         if ($enabled) {
             $result[] = $this->getPass('Module Enabled');
