@@ -167,6 +167,10 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
             }
         }
 
+        if (!empty($data['source']) && ($data['source'] == 'attribute_set_name')) {
+            $field = 'attribute_set_name';
+        }
+
         switch ($field) {
             case 'product_url':
                 $value = $this->getProductUrl($product, $config, $parent, $parentAttributes);
@@ -195,7 +199,7 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
             case 'parent_id':
                 $value = $this->getProductData($parent, $data);
                 break;
-            case 'attribute_set_id':
+            case 'attribute_set_name':
                 $value = $this->getAttributeSetName($productData);
                 break;
             case 'stock':

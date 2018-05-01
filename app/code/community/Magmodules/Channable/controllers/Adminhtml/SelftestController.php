@@ -50,6 +50,6 @@ class Magmodules_Channable_Adminhtml_SelftestController extends Mage_Adminhtml_C
      */
     protected function _isAllowed()
     {
-        return Mage::getSingleton('admin/session')->isAllowed('admin/channable/channable');
+        return Mage::getSingleton('admin/session')->isAllowed('admin/system/config/channable');
     }
 }

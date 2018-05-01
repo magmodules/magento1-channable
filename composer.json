@@ -2,7 +2,7 @@
   "name": "magmodules/magento1-channable",
   "type": "magento-module",
   "description": "Magento 1 Channable integration",
-  "version": "v1.6.1",
+  "version": "v1.6.2",
   "keywords": [
     "magento"
   ],
@@ -14,6 +14,6 @@
     }
   ],
   "require": {
-    "php": ">5.6.0"
+    "php": ">=5.6.0"
   }
 }
