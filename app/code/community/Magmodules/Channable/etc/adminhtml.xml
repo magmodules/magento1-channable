@@ -34,17 +34,6 @@
                             </config>
                         </children>
                     </system>
-                    <channable module="channable">
-                        <title>Channable</title>
-                        <sort_order>200</sort_order>
-                        <children>
-                            <channable module="channable">
-                                <title>Channable</title>
-                                <sort_order>100</sort_order>
-                                <action>adminhtml/channable/</action>
-                            </channable>
-                        </children>
-                    </channable>
                 </children>
             </admin>
         </resources>
