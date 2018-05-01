@@ -100,6 +100,10 @@ class Magmodules_Channable_Model_Adminhtml_System_Config_Source_Attribute_Abstra
             'value' => 'attribute_set_id'
         );
         $optionArray[] = array(
+            'label' => Mage::helper('channable')->__('Attribute Set Name'),
+            'value' => 'attribute_set_name'
+        );
+        $optionArray[] = array(
             'label' => Mage::helper('channable')->__('Minumun Sales Quantity'),
             'value' => 'min_sale_qty'
         );

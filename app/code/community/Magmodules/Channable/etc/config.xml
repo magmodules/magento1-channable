@@ -21,7 +21,7 @@
 <config>
     <modules>
         <Magmodules_Channable>
-            <version>1.6.1</version>
+            <version>1.6.2</version>
         </Magmodules_Channable>
     </modules>
     <global>
