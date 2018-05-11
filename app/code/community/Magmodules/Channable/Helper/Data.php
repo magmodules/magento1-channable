@@ -168,6 +168,7 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         if (!empty($data['source']) && ($data['source'] == 'attribute_set_name')) {
+            $config['field']['attribute_set_name'] = $config['field'][$field];
             $field = 'attribute_set_name';
         }
 
