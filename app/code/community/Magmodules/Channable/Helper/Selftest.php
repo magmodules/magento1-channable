@@ -23,8 +23,8 @@ class Magmodules_Channable_Helper_Selftest extends Magmodules_Channable_Helper_D
 
     const SUPPORT_URL = 'https://www.magmodules.eu/help/channable-connect/channable-selftest-results';
     const GITHUB_URL = 'https://api.github.com/repos/magmodules/magento1-channable/tags';
-    const GITHUB_CHANABLE_API_URL = 'https://github.com/magmodules/magento1-channable-api/releases';
-    const GITHUB_CHANABLE_URL = 'https://github.com/magmodules/magento1-channable/releases';
+    const GITHUB_CHANNABLE_API_URL = 'https://github.com/magmodules/magento1-channable-api/releases';
+    const GITHUB_CHANNABLE_URL = 'https://github.com/magmodules/magento1-channable/releases';
     const API_MIN_REQUIREMENT = '1.2.0';
 
     /**
@@ -106,7 +106,7 @@ class Magmodules_Channable_Helper_Selftest extends Magmodules_Channable_Helper_D
                     'v%s is latest version, currenlty running v%s. %s',
                     $latestVersion['version'],
                     $currentVersion,
-                    '<a href="' . self::GITHUB_CHANABLE_URL . '">[' . $this->__('Download') . ']</a>'
+                    '<a href="' . self::GITHUB_CHANNABLE_URL . '">[' . $this->__('Download') . ']</a>'
                 );
                 $result[] = $this->getNotice($msg, '#update');
             }
@@ -254,7 +254,7 @@ class Magmodules_Channable_Helper_Selftest extends Magmodules_Channable_Helper_D
                     'Channable API Module needs update (Installed: v%s - Min. required: v%s). %s',
                     $currentVersion,
                     self::API_MIN_REQUIREMENT,
-                    '<a href="' . self::GITHUB_CHANABLE_API_URL . '">[' . $this->__('Download') . ']</a>'
+                    '<a href="' . self::GITHUB_CHANNABLE_API_URL . '">[' . $this->__('Download') . ']</a>'
                 ),
             );
         }
