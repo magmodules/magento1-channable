@@ -147,6 +147,7 @@ class Magmodules_Channable_Model_Channable extends Magmodules_Channable_Model_Co
         $config['stock_manage'] = Mage::getStoreConfig('cataloginventory/item_options/manage_stock');
         $config['use_qty_increments'] = Mage::getStoreConfig('cataloginventory/item_options/enable_qty_increments');
         $config['qty_increments'] = Mage::getStoreConfig('cataloginventory/item_options/qty_increments');
+        $config['backorders'] = Mage::getStoreConfig('cataloginventory/item_options/backorders');
         $config['delivery'] = Mage::getStoreConfig('channable/data/delivery', $storeId);
         $config['delivery_be'] = Mage::getStoreConfig('channable/data/delivery_be', $storeId);
         $config['delivery_att'] = Mage::getStoreConfig('channable/data/delivery_att', $storeId);

@@ -107,7 +107,10 @@ class Magmodules_Channable_Model_Adminhtml_System_Config_Source_Attribute_Abstra
             'label' => Mage::helper('channable')->__('Minumun Sales Quantity'),
             'value' => 'min_sale_qty'
         );
-
+        $optionArray[] = array(
+            'label' => Mage::helper('channable')->__('Backorders'),
+            'value' => 'backorders'
+        );
         return $optionArray;
     }
 

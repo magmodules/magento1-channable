@@ -89,7 +89,9 @@ class Magmodules_Channable_Model_Common extends Mage_Core_Helper_Abstract
                 "min_sale_qty"              => "min_sale_qty",
                 "qty_increments"            => "qty_increments",
                 "enable_qty_increments"     => "enable_qty_increments",
-                "use_config_qty_increments" => "use_config_qty_increments"
+                "use_config_qty_increments" => "use_config_qty_increments",
+                "backorders"                => "backorders",
+                "use_config_backorders"     => "use_config_backorders",
             )
         )->addAttributeToSelect(
             array(
@@ -100,10 +102,12 @@ class Magmodules_Channable_Model_Common extends Mage_Core_Helper_Abstract
                 'min_sale_qty',
                 'qty_increments',
                 'enable_qty_increments',
-                'use_config_qty_increments'
+                'use_config_qty_increments',
+                'backorders',
+                'use_config_backorders'
             )
         );
-		
+
 		$this->joinPriceIndexLeft($collection, $websiteId);
         $collection->getSelect()->group('e.entity_id');
 
@@ -130,7 +134,7 @@ class Magmodules_Channable_Model_Common extends Mage_Core_Helper_Abstract
         $colls = array('final_price', 'min_price', 'max_price');
         $collection->getSelect()->joinLeft($tableName, $joinCond, $colls);
 	}
-	
+
     /**
      * @param $selectedAttrs
      *
