@@ -172,6 +172,11 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
             $field = 'attribute_set_name';
         }
 
+        if (!empty($data['source']) && ($data['source'] == 'backorders')) {
+            $config['field']['backorders'] = $config['field'][$field];
+            $field = 'backorders';
+        }
+
         switch ($field) {
             case 'product_url':
                 $value = $this->getProductUrl($product, $config, $parent, $parentAttributes);
@@ -205,6 +210,9 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
                 break;
             case 'stock':
                 $value = $this->getStock($productData, $config['stock_bundle']);
+                break;
+            case 'backorders':
+                $value = $this->getBackordersEnabled($productData, $config);
                 break;
             case 'categories':
                 $value = $this->getProductCategories($productData, $config);
@@ -813,10 +821,39 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
                 }
             }
 
-            return min($avQty);
+            if (!empty($avQty)) {
+                return min($avQty);
+            } else {
+                return null;
+            }
         }
 
         return null;
+    }
+
+    /**
+     * @param Mage_Catalog_Model_Product $product
+     * @param $config
+     *
+     * @return mixed
+     */
+    public function getBackordersEnabled($product, $config)
+    {
+        if ($product->getUseConfigManageStock()) {
+            $manageStock = $config['stock_manage'];
+        } else {
+            $manageStock = $product->getManageStock();
+        }
+
+        if (!$manageStock) {
+            return "0";
+        }
+
+        if ($product->getUseConfigBackorders()) {
+            return $config['backorders'];
+        }
+
+        return $product->getBackorders();
     }
 
     /**
