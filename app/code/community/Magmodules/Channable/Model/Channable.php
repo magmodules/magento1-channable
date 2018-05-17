@@ -361,6 +361,10 @@ class Magmodules_Channable_Model_Channable extends Magmodules_Channable_Model_Co
                     $productRow = array_merge($productRow, $extraData);
                 }
 
+                $productRow = new Varien_Object($productRow);
+                Mage::dispatchEvent('channable_feed_item_before', array('feed_data' => $productRow , 'product' => $product));
+                $productRow = $productRow->getData();
+
                 $feed[] = $productRow;
                 if ($config['item_updates']) {
                     $this->processItemUpdates($productRow, $config['store_id']);
