@@ -14,8 +14,8 @@
  * @category      Magmodules
  * @package       Magmodules_Channable
  * @author        Magmodules <info@magmodules.eu>
- * @copyright     Copyright (c) 2017 (http://www.magmodules.eu)
- * @license       https://www.magmodules.eu/terms.html  Single Service License
+ * @copyright     Copyright (c) 2018 (http://www.magmodules.eu)
+ * @license       http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
 class Magmodules_Channable_Model_Resource_Product_Collection extends Mage_Catalog_Model_Resource_Product_Collection

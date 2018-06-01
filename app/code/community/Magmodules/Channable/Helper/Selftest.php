@@ -71,8 +71,10 @@ class Magmodules_Channable_Helper_Selftest extends Magmodules_Channable_Helper_D
                     $atts = '<i>' . implode($nonFlatAttributes, ', ') . '</i>';
                     $url = Mage::helper("adminhtml")->getUrl('adminhtml/channable/addToFlat');
                     $msg = $this->__('Missing Attribute(s) in Catalog Product Flat: %s', $atts);
-                    $msg .= '<br/> ' . $this->__('<a href="%s">Add</a> attributes to Flat Catalog or enable "Bypass Flat Product Tables"',
-                            $url);
+                    $msg .= '<br/> ' . $this->__(
+                        '<a href="%s">Add</a> attributes to Flat Catalog or enable "Bypass Flat Product Tables"',
+                        $url
+                    );
                     $result[] = $this->getFail($msg, '#missingattributes');
                 }
             }
@@ -98,8 +100,10 @@ class Magmodules_Channable_Helper_Selftest extends Magmodules_Channable_Helper_D
             $modulesArray = (array)Mage::getConfig()->getNode('modules')->children();
             $currentVersion = $modulesArray['Magmodules_Channable']->version;
             if (version_compare($currentVersion, $latestVersion['version']) >= 0) {
-                $msg = $this->__('Running the latest version (Installed: v%s - Github: v%s)', $currentVersion,
-                    $latestVersion['version']);
+                $msg = $this->__(
+                    'Running the latest version (Installed: v%s - Github: v%s)', $currentVersion,
+                    $latestVersion['version']
+                );
                 $result[] = $this->getPass($msg);
             } else {
                 $msg = $this->__(
@@ -118,6 +122,7 @@ class Magmodules_Channable_Helper_Selftest extends Magmodules_Channable_Helper_D
             if (!empty($apiModule['success'])) {
                 $result[] = $this->getPass($apiModule['success']);
             }
+
             if (!empty($apiModule['error'])) {
                 $result[] = $this->getFail($apiModule['error']);
             }
@@ -151,17 +156,21 @@ class Magmodules_Channable_Helper_Selftest extends Magmodules_Channable_Helper_D
         if ($type == 'pass') {
             $format = '<span class="channable-success">%s</span>';
         }
+
         if ($type == 'fail') {
             $format = '<span class="channable-error">%s</span>';
         }
+
         if ($type == 'notice') {
             $format = '<span class="channable-notice">%s</span>';
         }
 
         if ($format) {
             if ($link) {
-                $format = str_replace('</span>', '<span class="more"><a href="%s">More Info</a></span></span>',
-                    $format);
+                $format = str_replace(
+                    '</span>', '<span class="more"><a href="%s">More Info</a></span></span>',
+                    $format
+                );
                 return sprintf($format, Mage::helper('channable')->__($msg), self::SUPPORT_URL . $link);
             } else {
                 return sprintf($format, Mage::helper('channable')->__($msg));
@@ -246,7 +255,8 @@ class Magmodules_Channable_Helper_Selftest extends Magmodules_Channable_Helper_D
                 'success' => $this->__(
                     'Running minumum required Channable API Module (Installed: v%s - Min. required: v%s)',
                     $currentVersion,
-                    self::API_MIN_REQUIREMENT)
+                    self::API_MIN_REQUIREMENT
+                )
             );
         } else {
             return array(

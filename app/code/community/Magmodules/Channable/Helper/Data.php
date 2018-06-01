@@ -27,12 +27,35 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
 
     /**
      * @param $path
+     * @param $storeId
+     *
+     * @return mixed
+     */
+    public function getSerializedConfigData($path, $storeId = null)
+    {
+        return @unserialize($this->getConfigData($path, $storeId));
+    }
+
+    /**
+     * @param $path
+     * @param $storeId
+     *
+     * @return mixed
+     */
+    public function getConfigData($path, $storeId = null)
+    {
+        return Mage::getStoreConfig('channable/' . $path, $storeId);
+    }
+
+    /**
+     * @param $path
      *
      * @return array
      */
     public function getStoreIds($path)
     {
         $storeIds = array();
+        /** @var Mage_Core_Model_Resource_Store_Collection $stores */
         $stores = Mage::getModel('core/store')->getCollection();
         foreach ($stores as $store) {
             if (Mage::getStoreConfig($path, $store->getId())) {
@@ -41,6 +64,25 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         return $storeIds;
+    }
+
+    /**
+     * @param     $path
+     * @param int $storeId
+     *
+     * @return mixed
+     */
+    public function getUncachedConfigValue($path, $storeId = 0)
+    {
+        /** @var Mage_Core_Model_Resource_Config_Data_Collection $collection */
+        $collection = Mage::getModel('core/config_data')->getCollection()->addFieldToFilter('path', $path);
+        if ($storeId == 0) {
+            $collection = $collection->addFieldToFilter('scope_id', 0)->addFieldToFilter('scope', 'default');
+        } else {
+            $collection = $collection->addFieldToFilter('scope_id', $storeId)->addFieldToFilter('scope', 'stores');
+        }
+
+        return $collection->getFirstItem()->getValue();
     }
 
     /**
@@ -53,7 +95,6 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getProductDataRow($product, $config, $parent, $parentAttributes)
     {
-
         $fields = $config['field'];
         $data = array();
 
@@ -177,6 +218,21 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
             $field = 'backorders';
         }
 
+        if (!empty($data['source']) && ($data['source'] == 'related_skus')) {
+            $config['field']['related_skus'] = $config['field'][$field];
+            $field = 'related_skus';
+        }
+
+        if (!empty($data['source']) && ($data['source'] == 'upsell_skus')) {
+            $config['field']['upsell_skus'] = $config['field'][$field];
+            $field = 'upsell_skus';
+        }
+
+        if (!empty($data['source']) && ($data['source'] == 'crosssell_skus')) {
+            $config['field']['crosssell_skus'] = $config['field'][$field];
+            $field = 'crosssell_skus';
+        }
+
         switch ($field) {
             case 'product_url':
                 $value = $this->getProductUrl($product, $config, $parent, $parentAttributes);
@@ -219,6 +275,11 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
                 break;
             case 'category_ids':
                 $value = $this->getProductCategoryIds($productData);
+                break;
+            case 'related_skus':
+            case 'upsell_skus':
+            case 'crosssell_skus':
+                $value = $this->getProductRelations($productData, $field);
                 break;
             default:
                 if (!empty($data['source'])) {
@@ -395,17 +456,23 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
                 usort(
                     $gallery, function ($a, $b) {
                     return $a['position_default'] > $b['position_default'];
-                }
+                    }
                 );
                 foreach ($gallery as $galImage) {
                     if ($galImage['disabled'] == 0) {
-                        $imageData['image']['all']['image_' . $i] = $this->checkImagePath($galImage['file'],
-                            $config['media_image_url']);
-                        $imageData['image']['last'] = $this->checkImagePath($galImage['file'],
-                            $config['media_image_url']);
+                        $imageData['image']['all']['image_' . $i] = $this->checkImagePath(
+                            $galImage['file'],
+                            $config['media_image_url']
+                        );
+                        $imageData['image']['last'] = $this->checkImagePath(
+                            $galImage['file'],
+                            $config['media_image_url']
+                        );
                         if ($i == 1) {
-                            $imageData['image']['first'] = $this->checkImagePath($galImage['file'],
-                                $config['media_image_url']);
+                            $imageData['image']['first'] = $this->checkImagePath(
+                                $galImage['file'],
+                                $config['media_image_url']
+                            );
                         }
 
                         $i++;
@@ -505,10 +572,12 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     public function getProductWeight($product, $config)
     {
         if (!empty($config['weight'])) {
-            $weight = number_format($product->getWeight(), 2, '.', '');
+            $weight = (float)$product->getWeight();
+            $weight = number_format($weight, 2, '.', '');
             if (isset($config['weight_units'])) {
                 $weight = $weight . ' ' . $config['weight_units'];
             }
+
             if (!empty($weight)) {
                 return $weight;
             }
@@ -526,129 +595,146 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     public function getProductPrice($product, $config)
     {
         $priceData = array();
-        $priceMarkup = $this->getPriceMarkup($config);
-        $taxParam = $config['use_tax'];
 
-        if (!empty($config['hide_currency'])) {
-            $currency = '';
-        } else {
-            $currency = ' ' . $config['currency'];
+        switch ($product->getTypeId()) {
+            case 'grouped':
+                $groupedPrices = $this->getGroupedPrices($product, $config);
+
+                $price = $groupedPrices['min_price'];
+                $finalPrice = $groupedPrices['min_price'];
+                $minPrice = $groupedPrices['min_price'];
+                $maxPrice = $groupedPrices['max_price'];
+                $totalPrice = $groupedPrices['total_price'];
+
+                $groupedPriceType = !empty($config['price_grouped']) ? $config['price_grouped'] : 'min';
+                if ($groupedPriceType == 'max') {
+                    $price = $maxPrice;
+                    $finalPrice = $maxPrice;
+                }
+
+                if ($groupedPriceType == 'total') {
+                    $price = $totalPrice;
+                    $finalPrice = $totalPrice;
+                }
+                break;
+            case 'bundle':
+                if ($product->getPriceType() == '1') {
+                    $price = $this->processPrice($product, $product->getPrice(), $config);
+                    $finalPrice = $this->processPrice($product, $product->getFinalPrice(), $config);;
+                    $minPrice = $this->processPrice($product, $product->getData('min_price'), $config);
+                    $maxPrice = $this->processPrice($product, $product->getData('max_price'), $config);
+
+                    if ((floatval($price) == 0) && (floatval($minPrice) !== 0)) {
+                        $price = $minPrice;
+                    }
+                } else {
+                    $bundlePrices = $this->getBundlePrices($product, $config);
+                    $price = $this->processPrice($product, $bundlePrices['min_price'], $config);
+                    $minPrice = $this->processPrice($product, $bundlePrices['min_price'], $config);
+                    $maxPrice = $this->processPrice($product, $bundlePrices['max_price'], $config);
+
+                    if (isset($bundlePrices['configured_price'])) {
+                        $configuredPrice = $this->processPrice($product, $bundlePrices['configured_price'], $config);
+                    }
+                }
+
+                if ($product->getSpecialPrice() > 0) {
+                    $today = time();
+                    $specialPriceFromDate = $product->getSpecialFromDate();
+                    $specialPriceToDate = $product->getSpecialToDate();
+                    if ($today >= strtotime($specialPriceFromDate)) {
+                        if ($today <= strtotime($specialPriceToDate) || empty($specialPriceToDate)) {
+                            $finalPrice = $price * ($product->getSpecialPrice() / 100);
+                            $minPrice = $minPrice * ($product->getSpecialPrice() / 100);
+                            $maxPrice = $maxPrice * ($product->getSpecialPrice() / 100);
+                        }
+                    }
+                }
+                break;
+            default:
+                $price = $this->processPrice($product, $product->getPrice(), $config);
+                $finalPrice = $this->processPrice($product, $product->getFinalPrice(), $config);;
+                $minPrice = $this->processPrice($product, $product->getData('min_price'), $config);
+                $maxPrice = $this->processPrice($product, $product->getData('max_price'), $config);
+
+                if ((floatval($price) == 0) && (floatval($minPrice) !== 0)) {
+                    $price = $minPrice;
+                }
+                break;
         }
 
-        if (!empty($config['price_scope'])) {
-            $price = Mage::getResourceModel('catalog/product')
-                ->getAttributeRawValue($product->getId(), 'price', $config['store_id']);
-        } else {
-            $price = $product->getPrice();
+        $priceData['final_price_clean'] = $price;
+        $priceData['price'] = $this->formatPrice($price, $config);
+        $priceData['regular_price'] = $this->formatPrice($price, $config);
+
+        if (isset($minPrice)) {
+            $priceData['min_price'] = $this->formatPrice($minPrice, $config);
         }
 
-        if ($price == 0) {
-            $price = $product->getMinPrice();
+        if (isset($maxPrice)) {
+            $priceData['max_price'] = $this->formatPrice($maxPrice, $config);
         }
 
-        $price = Mage::helper('tax')->getPrice($product, $price, $taxParam);
-        $priceData['regular_price'] = number_format(($price * $priceMarkup), 2, '.', '') . $currency;
-        $pricerulePrice = Mage::helper('tax')->getPrice($product, $product->getFinalPrice(), $taxParam);
+        if (isset($configuredPrice)) {
+            $priceData['configured_price'] = $this->formatPrice($configuredPrice, $config);
+        }
 
-        if (($pricerulePrice > 0) && ($pricerulePrice < $price)) {
-            $salesPrice = $pricerulePrice;
+        if (isset($finalPrice) && ($finalPrice > 0) && ($finalPrice < $price)) {
+            $today = time();
             $specialPriceFromDate = $product->getSpecialFromDate();
             $specialPriceToDate = $product->getSpecialToDate();
-            $today = time();
             if ($today >= strtotime($specialPriceFromDate)) {
                 if ($today <= strtotime($specialPriceToDate) || empty($specialPriceToDate)) {
                     $priceData['sales_date_start'] = $specialPriceFromDate;
                     $priceData['sales_date_end'] = $specialPriceToDate;
                 }
             }
-        }
 
-        if (($product->getTypeId() == 'bundle') && ($price < 0.01)) {
-            $price = $this->getPriceBundle($product, $config['store_id']);
-        }
-
-        if ($product->getTypeId() == 'grouped') {
-            if (!empty($config['price_grouped'])) {
-                $price = $this->getPriceGrouped($product, $config['price_grouped']);
-            } else {
-                if ($price < 0.01) {
-                    $price = $this->getPriceGrouped($product);
-                }
-            }
-        }
-
-        $priceData['final_price_clean'] = $price;
-        $priceData['price'] = number_format(($price * $priceMarkup), 2, '.', '') . $currency;
-
-        if ($product->getMinPrice() !== null) {
-            $minPrice = Mage::helper('tax')->getPrice($product, $product->getMinPrice(), $taxParam);
-            $priceData['min_price'] = number_format(($minPrice * $priceMarkup), 2, '.', '') . $currency;
-        }
-
-        if ($product->getMaxPrice() !== null) {
-            $maxPrice = Mage::helper('tax')->getPrice($product, $product->getMaxPrice(), $taxParam);
-            $priceData['max_price'] = number_format(($maxPrice * $priceMarkup), 2, '.', '') . $currency;
-        }
-
-        if (isset($salesPrice)) {
-            $priceData['sales_price'] = number_format(($salesPrice * $priceMarkup), 2, '.', '') . $currency;
+            $priceData['sales_price'] = $this->formatPrice($finalPrice, $config);
         }
 
         return $priceData;
     }
 
     /**
-     * @param $config
+     * @param        Mage_Catalog_Model_Product $product
+     * @param string                            $config
      *
-     * @return int
+     * @return bool|mixed|number
      */
-    public function getPriceMarkup($config)
+    public function getGroupedPrices($product, $config)
     {
-        $markup = 1;
-        if (!empty($config['price_add_tax']) && !empty($config['price_add_tax_perc'])) {
-            $markup = 1 + ($config['price_add_tax_perc'] / 100);
-        }
-
-        if ($config['base_currency_code'] != $config['currency']) {
-            $exchangeRate = Mage::helper('directory')
-                ->currencyConvert(1, $config['base_currency_code'], $config['currency']);
-            $markup = ($markup * $exchangeRate);
-        }
-
-        return $markup;
-    }
-
-    /**
-     * @param Mage_Catalog_Model_Product $product
-     * @param                            $storeId
-     *
-     * @return int
-     */
-    public function getPriceBundle($product, $storeId)
-    {
-        if (($product->getPriceType() == '1') && ($product->getFinalPrice() > 0)) {
-            $price = $product->getFinalPrice();
-        } else {
-            $block = Mage::getSingleton('core/layout')->createBlock('bundle/catalog_product_view_type_bundle');
-            $options = $block->setProduct($product)->getOptions();
-            $price = 0;
-
-            foreach ($options as $option) {
-                $selection = $option->getDefaultSelection();
-                if ($selection === null) {
-                    continue;
-                }
-
-                $selectionProductId = $selection->getProductId();
-                $_resource = Mage::getSingleton('catalog/product')->getResource();
-                $finalPrice = $_resource->getAttributeRawValue($selectionProductId, 'final_price', $storeId);
-                $selectionQty = $_resource->getAttributeRawValue($selectionProductId, 'selection_qty', $storeId);
-                $price += ($finalPrice * $selectionQty);
+        $prices = array();
+        $_associatedProducts = $product->getTypeInstance(true)->getAssociatedProducts($product);
+        foreach ($_associatedProducts as $_item) {
+            $priceAssociated = $this->processPrice($_item, $_item->getFinalPrice(), $config);
+            if ($priceAssociated > 0) {
+                $prices[] = $priceAssociated;
             }
         }
 
-        if ($price < 0.01) {
-            $price = Mage::helper('tax')->getPrice($product, $product->getFinalPrice(), true);
+        return array(
+            'min_price'   => min($prices),
+            'max_price'   => max($prices),
+            'total_price' => array_sum($prices)
+        );
+    }
+
+    /**
+     * @param Mage_Catalog_Model_Product     $product
+     * @param                                $price
+     * @param                                $config
+     *
+     * @return float|string
+     */
+    public function processPrice($product, $price, $config)
+    {
+        if (!empty($config['markup'])) {
+            $price = $price * $config['markup'];
+        }
+
+        if (isset($config['use_tax'])) {
+            $price = Mage::helper('tax')->getPrice($product, $price, $config['use_tax']);
         }
 
         return $price;
@@ -656,40 +742,84 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
 
     /**
      * @param        Mage_Catalog_Model_Product $product
-     * @param string                            $pricemodel
+     * @param array                             $config
      *
      * @return bool|mixed|number
      */
-    public function getPriceGrouped($product, $pricemodel = '')
+    public function getBundlePrices($product, $config)
     {
-        if (!$pricemodel) {
-            $pricemodel = 'min';
-        }
+        $minimalPrice = null;
+        $maximalPrice = null;
+        $configuredPrice = null;
 
-        $prices = array();
-        $_associatedProducts = $product->getTypeInstance(true)->getAssociatedProducts($product);
-        foreach ($_associatedProducts as $_item) {
-            $priceAssociated = Mage::helper('tax')->getPrice($_item, $_item->getFinalPrice(), true);
-            if ($priceAssociated > 0) {
-                $prices[] = $priceAssociated;
+        /** @var Mage_Bundle_Model_Product_Type $typeInstance */
+        $typeInstance = $product->getTypeInstance(true);
+        $typeInstance->setStoreFilter($config['store_id'], $product);
+
+        $optionCollection = $typeInstance->getOptionsCollection($product);
+        $selectionCollection = $typeInstance->getSelectionsCollection($typeInstance->getOptionsIds($product), $product);
+
+        $options = $optionCollection->appendSelections(
+            $selectionCollection, false,
+            Mage::helper('catalog/product')->getSkipSaleableCheck()
+        );
+
+        foreach ($options as $option) {
+            $prices = array();
+            $confFlag = false;
+            $selections = $option->getSelections();
+            foreach ($selections as $key => $selection) {
+                if ($selection->getSelectionQty() > 0) {
+                    $selectionPrice = $selection->getFinalPrice() * $selection->getSelectionQty();
+                } else {
+                    $selectionPrice = $selection->getFinalPrice();
+                }
+
+                $prices[] = $this->processPrice($selection, $selectionPrice, $config);
+
+                if ($selection->getIsDefault()) {
+                    $configuredPrice += $this->processPrice($selection, $selectionPrice, $config);
+                    $confFlag = true;
+                }
+            }
+
+            if ($option->getRequired()) {
+                $minimalPrice += min($prices);
+                if (!$confFlag) {
+                    $configuredPrice += min($prices);
+                }
+            }
+
+            if ($option->getType() == 'checkbox' || $option->getType() == 'multi') {
+                foreach ($prices as $price) {
+                    $maximalPrice += $price;
+                }
+            } else {
+                $maximalPrice += max($prices);
             }
         }
 
-        if (!empty($prices)) {
-            if ($pricemodel == 'min') {
-                return min($prices);
-            }
+        return array(
+            'min_price'        => $minimalPrice,
+            'max_price'        => $maximalPrice,
+            'configured_price' => $configuredPrice
+        );
+    }
 
-            if ($pricemodel == 'max') {
-                return max($prices);
-            }
-
-            if ($pricemodel == 'total') {
-                return array_sum($prices);
-            }
+    /**
+     * @param $price
+     * @param $config
+     *
+     * @return string
+     */
+    public function formatPrice($price, $config)
+    {
+        $price = number_format(floatval(str_replace(',', '.', $price)), 2, '.', '');
+        if (!empty($config['use_currency']) && ($price >= 0)) {
+            $price .= ' ' . $config['currency'];
         }
 
-        return false;
+        return $price;
     }
 
     /**
@@ -702,6 +832,7 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
         if ($product->getTypeId() == 'bundle') {
             return 'true';
         }
+
         return false;
     }
 
@@ -758,6 +889,7 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
                 } else {
                     $attributetext = $product->getAttributeText($source);
                 }
+
                 if (!empty($attributetext)) {
                     $value = $attributetext;
                 }
@@ -790,7 +922,15 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getAttributeSetName($product)
     {
-        return Mage::getModel('eav/entity_attribute_set')->load($product->getAttributeSetId())->getAttributeSetName();
+        $attributeSetId = $product->getAttributeSetId();
+        /** @var Mage_Eav_Model_Entity_Attribute_Set $attributeSet */
+        $attributeSet = Mage::getModel('eav/entity_attribute_set')->load($attributeSetId);
+
+        if ($attributeSet->getId()) {
+            return $attributeSet->getAttributeSetName();
+        }
+
+        return null;
     }
 
     /**
@@ -815,6 +955,7 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
                     if ($selection === null) {
                         continue;
                     }
+
                     if ($selection->getSelectionQty() > 0) {
                         $avQty[] = ($selection->getStockItem()->getQty() / $selection->getSelectionQty());
                     }
@@ -833,7 +974,7 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
 
     /**
      * @param Mage_Catalog_Model_Product $product
-     * @param $config
+     * @param                            $config
      *
      * @return mixed
      */
@@ -895,7 +1036,7 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
      *
      * @return array
      */
-    function getSortedArray($data, $sort)
+    public function getSortedArray($data, $sort)
     {
         $code = "return strnatcmp(\$a['$sort'], \$b['$sort']);";
         usort($data, create_function('$a,$b', $code));
@@ -911,6 +1052,35 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     public function getProductCategoryIds($product)
     {
         return implode(',', $product->getCategoryIds());
+    }
+
+    /**
+     * @param Mage_Catalog_Model_Product $product
+     * @param                            $type
+     *
+     * @return string
+     */
+    public function getProductRelations($product, $type)
+    {
+        $products = array();
+        if ($type == 'related_skus') {
+            $products = $product->getRelatedProducts();
+        }
+
+        if ($type == 'upsell_skus') {
+            $products = $product->getUpSellProducts();
+        }
+
+        if ($type == 'crosssell_skus') {
+            $products = $product->getCrossSellProducts();
+        }
+
+        $skus = array();
+        foreach ($products as $product) {
+            $skus[] = $product->getSku();
+        }
+
+        return implode(',', $skus);
     }
 
     /**
@@ -983,6 +1153,27 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * @param $config
+     *
+     * @return int
+     */
+    public function getPriceMarkup($config)
+    {
+        $markup = 1;
+        if (!empty($config['price_add_tax']) && !empty($config['price_add_tax_perc'])) {
+            $markup = 1 + ($config['price_add_tax_perc'] / 100);
+        }
+
+        if ($config['base_currency_code'] != $config['currency']) {
+            $exchangeRate = Mage::helper('directory')
+                ->currencyConvert(1, $config['base_currency_code'], $config['currency']);
+            $markup = ($markup * $exchangeRate);
+        }
+
+        return $markup;
+    }
+
+    /**
      * @param $parents
      * @param $config
      *
@@ -998,7 +1189,6 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
 
         if (empty($config['conf_switch_urls'])) {
             return $configurableAttributes;
-
         }
 
         foreach ($parents as $parent) {
@@ -1042,6 +1232,7 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
             $action = (!empty($attribute['action']) ? $attribute['action'] : '');
             $parent = (!empty($attribute['parent']) ? $attribute['parent'] : '');
             if (isset($attribute['source'])) {
+                /** @var Mage_Eav_Model_Entity_Attribute $attributeModel */
                 $attributeModel = Mage::getModel('eav/entity_attribute')
                     ->loadByCode('catalog_product', $attribute['source']);
 
@@ -1051,6 +1242,7 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
             if (!empty($attribute['label']) && ($attribute['label'] == 'manage_stock')) {
                 $type = 'boolean';
             }
+
             if (!empty($attribute['label']) && ($attribute['label'] == 'qty')) {
                 $type = 'float';
             }
@@ -1107,7 +1299,7 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
                 ->setPageSize(1)
                 ->getFirstItem();
         } catch (Exception $e) {
-            Mage::log($e->getMessage());
+            $this->addToLog('getCategoryData', $e->getMessage(), 2);
         }
 
         if (empty($e)) {
@@ -1116,6 +1308,7 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
                 ->setStoreId($storeId)
                 ->getCollection()
                 ->addAttributeToSelect($attributes)
+                ->addFieldToFilter('path', array('like' => '%/' . $config['root_category_id'] . '/%'))
                 ->addFieldToFilter('is_active', array('eq' => 1));
         } else {
             /** @var Mage_Catalog_Model_Resource_Category_Collection $categories */
@@ -1123,6 +1316,7 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
                 ->setStoreId($storeId)
                 ->getCollection()
                 ->addAttributeToSelect($defaultAttributes)
+                ->addFieldToFilter('path', array('like' => '%/' . $config['root_category_id'] . '/%'))
                 ->addFieldToFilter('is_active', array('eq' => 1));
         }
 
@@ -1205,8 +1399,8 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * @param $products
-     * @param $config
+     * @param Mage_Catalog_Model_Resource_Product_Collection $products
+     * @param                                                $config
      *
      * @return array
      */
@@ -1251,8 +1445,8 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * @param $config
-     * @param $products
+     * @param                                                $config
+     * @param Mage_Catalog_Model_Resource_Product_Collection $products
      *
      * @return array
      */
@@ -1270,6 +1464,7 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
             foreach ($products as $product) {
                 if ($product->getTypeId() == 'configurable') {
                     $parentId = $product->getEntityId();
+                    /** @var Mage_Catalog_Model_Product_Type_Configurable_Attribute $attributes */
                     $attributes = $product->getTypeInstance(true)->getConfigurableAttributes($product);
                     $basePrice = $product->getFinalPrice();
                     $basePriceReg = $product->getPrice();
@@ -1300,18 +1495,17 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
                         $totalPrice = $basePrice;
                         $totalPriceReg = $basePriceReg;
                         foreach ($attributes as $attribute) {
-                            $value = $sProduct->getData($attribute->getProductAttribute()->getAttributeCode());
-                            if (isset($optionPrices[$value])) {
-                                $totalPrice += $optionPrices[$value];
-                                $totalPriceReg += $optionPrices[$value . '_reg'];
+                            if ($attribute->getProductAttribute() !== null) {
+                                $value = $sProduct->getData($attribute->getProductAttribute()->getAttributeCode());
+                                if (isset($optionPrices[$value])) {
+                                    $totalPrice += $optionPrices[$value];
+                                    $totalPriceReg += $optionPrices[$value . '_reg'];
+                                }
                             }
                         }
 
-                        $typePrices[$parentId . '_' . $sProduct->getEntityId()] =
-                            number_format(($totalPrice * $config['markup']), 2, '.', '');
-
-                        $typePrices[$parentId . '_' . $sProduct->getEntityId() . '_reg'] =
-                            number_format(($totalPriceReg * $config['markup']), 2, '.', '');
+                        $typePrices[$parentId . '_' . $sProduct->getEntityId()] = $this->formatPrice(($totalPrice * $config['markup']), $config);
+                        $typePrices[$parentId . '_' . $sProduct->getEntityId() . '_reg'] = $this->formatPrice(($totalPriceReg * $config['markup']), $config);
                     }
                 }
             }
@@ -1363,6 +1557,8 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
             $dir = Mage::getBaseDir('app') . DS . 'code' . DS . 'local' . DS . 'Magmodules' . DS . $dir;
             return file_exists($dir);
         }
+
+        return false;
     }
 
     /**
@@ -1443,7 +1639,9 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     public function getToken()
     {
         $token = $this->getUncachedConfigValue('channable/connect/token', 0);
-        $token = Mage::helper('core')->decrypt($token);
+        /** @var Mage_Core_Helper_Data $helper */
+        $helper = Mage::helper('core');
+        $token = $helper->decrypt($token);
         $strlen = strlen($token);
 
         if ($strlen == 32 || $strlen == 16) {
@@ -1455,25 +1653,7 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
         return false;
     }
 
-    /**
-     * @param     $path
-     * @param int $storeId
-     *
-     * @return mixed
-     */
-    public function getUncachedConfigValue($path, $storeId = 0)
-    {
-        $collection = Mage::getModel('core/config_data')->getCollection()->addFieldToFilter('path', $path);
-        if ($storeId == 0) {
-            $collection = $collection->addFieldToFilter('scope_id', 0)->addFieldToFilter('scope', 'default');
-        } else {
-            $collection = $collection->addFieldToFilter('scope_id', $storeId)->addFieldToFilter('scope', 'stores');
-        }
-
-        return $collection->getFirstItem()->getValue();
-    }
-
-    /**
+      /**
      * @param $page
      * @param $pages
      * @param $processed
@@ -1497,7 +1677,21 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
             $processed
         );
 
-        Mage::log($msg, null, self::LOG_FILENAME, self::FORCE_LOG);
+        $this->addToLog('Generation', $msg, '', true);
+    }
+
+    /**
+     * @param      $type
+     * @param      $msg
+     * @param int  $level
+     * @param bool $force
+     */
+    public function addToLog($type, $msg, $level = 6, $force = false)
+    {
+        if (is_array($msg)) {
+            $msg = json_encode($msg);
+        }
+        Mage::log($type . ': ' . $msg, $level, self::LOG_FILENAME, $force);
     }
 
     /**

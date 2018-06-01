@@ -53,27 +53,36 @@ class Magmodules_Channable_FeedController extends Mage_Core_Controller_Front_Act
             $page = $this->getRequest()->getParam('page', 1);
             if ($storeId && $code) {
                 if ($code == $this->helper->getToken()) {
-                    $timeStart = microtime(true);
-                    /** @var Mage_Core_Model_App_Emulation $appEmulation */
-                    $appEmulation = Mage::getSingleton('core/app_emulation');
-                    $initialEnvironmentInfo = $appEmulation->startEnvironmentEmulation($storeId);
-                    Mage::app()->loadAreaPart(
-                        Mage_Core_Model_App_Area::AREA_GLOBAL,
-                        Mage_Core_Model_App_Area::PART_EVENTS
-                    )->loadArea(Mage_Core_Model_App_Area::AREA_FRONTEND);
-                    if ($feed = $this->model->generateFeed($storeId, $timeStart, $page)) {
-                        if ($this->getRequest()->getParam('array')) {
-                            $this->getResponse()->setBody(Zend_Debug::dump($feed, null, false));
-                        } else {
-                            $this->getResponse()
-                                ->clearHeaders()
-                                ->setHeader('Content-type', 'application/json', true)
-                                ->setHeader('Cache-control', 'no-cache', true)
-                                ->setBody(json_encode($feed));
+                    try {
+                        $timeStart = microtime(true);
+                        /** @var Mage_Core_Model_App_Emulation $appEmulation */
+                        $appEmulation = Mage::getSingleton('core/app_emulation');
+                        $initialEnvironmentInfo = $appEmulation->startEnvironmentEmulation($storeId);
+                        Mage::app()->loadAreaPart(
+                            Mage_Core_Model_App_Area::AREA_GLOBAL,
+                            Mage_Core_Model_App_Area::PART_EVENTS
+                        )->loadArea(Mage_Core_Model_App_Area::AREA_FRONTEND);
+                        if ($feed = $this->model->generateFeed($storeId, $timeStart, $page)) {
+                            if ($this->getRequest()->getParam('array')) {
+                                $this->getResponse()->setBody(Zend_Debug::dump($feed, null, false));
+                            } else {
+                                $this->getResponse()
+                                    ->clearHeaders()
+                                    ->setHeader('Content-type', 'application/json', true)
+                                    ->setHeader('Cache-control', 'no-cache', true)
+                                    ->setBody(json_encode($feed));
+                            }
                         }
-                    }
 
-                    $appEmulation->stopEnvironmentEmulation($initialEnvironmentInfo);
+                        $appEmulation->stopEnvironmentEmulation($initialEnvironmentInfo);
+                    } catch (Exception $e) {
+                        Mage::logException($e);
+                        $this->getResponse()
+                            ->clearHeaders()
+                            ->setHeader('Content-type', 'application/json', true)
+                            ->setHeader('Cache-control', 'no-cache', true)
+                            ->setBody(json_encode(array('error' => $e->getMessage())));
+                    }
                 }
             }
         }

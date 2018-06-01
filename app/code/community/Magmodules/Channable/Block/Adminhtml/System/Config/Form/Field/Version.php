@@ -32,7 +32,8 @@ class Magmodules_Channable_Block_Adminhtml_System_Config_Form_Field_Version
     {
         $modules = Mage::getConfig()->getNode('modules')->children();
         $modulesArray = (array)$modules;
-        return $modulesArray['Magmodules_Channable']->version;
+        $element->setValue($modulesArray['Magmodules_Channable']->version);
+        return parent::_getElementHtml($element);
     }
 
 }
