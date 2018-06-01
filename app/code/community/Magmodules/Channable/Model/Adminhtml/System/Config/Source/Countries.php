@@ -35,7 +35,6 @@ class Magmodules_Channable_Model_Adminhtml_System_Config_Source_Countries
     public function toOptionArray()
     {
         if (!$this->options) {
-
             $countries = array();
             $countries[] = array('value' => '', 'label' => Mage::helper('channable')->__('-- All Countries'));
 

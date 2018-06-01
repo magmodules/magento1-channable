@@ -31,10 +31,13 @@ class Magmodules_Channable_Block_Adminhtml_System_Config_Form_Field_Token
     public function _getElementHtml(Varien_Data_Form_Element_Abstract $element)
     {
         if ($token = Mage::helper('channable')->getToken()) {
-            return $token;
+            $element->setValue($token);
+        } else {
+            $html = '<a href="' . $this->getUrl('adminhtml/channable/createToken') . '">Create Token</a>';
+            $element->setValue($html);
         }
 
-        return '<a href="' . $this->getUrl('adminhtml/channable/createToken') . '">Create Token</a>';
+        return parent::_getElementHtml($element);
     }
 
 }

@@ -33,15 +33,15 @@ class Magmodules_Channable_Model_Adminhtml_System_Config_Backend_Design_Extra
             unset($value['__empty']);
             if (count($value)) {
                 $value = $this->orderData($value, 'label');
-          		foreach ($value as $key => $field) {
+                  foreach ($value as $key => $field) {
                     if (!empty($field['attribute']) && !empty($field['label'])) {
                         $label = str_replace(" ", "_", trim($field['label']));
                         $value[$key]['label'] = strtolower($label);
                         $value[$key]['attribute'] = $field['attribute'];
                     } else {
-                    	unset($value[$key]);
+                        unset($value[$key]);
                     }
-                }
+                  }
 
                 $keys = array();
                 for ($i = 0; $i < count($value); $i++) {

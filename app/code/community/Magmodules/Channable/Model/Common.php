@@ -108,7 +108,7 @@ class Magmodules_Channable_Model_Common extends Mage_Core_Helper_Abstract
             )
         );
 
-		$this->joinPriceIndexLeft($collection, $websiteId);
+        $this->joinPriceIndexLeft($collection, $websiteId);
         $collection->getSelect()->group('e.entity_id');
 
         if (!empty($config['filters'])) {
@@ -123,17 +123,19 @@ class Magmodules_Channable_Model_Common extends Mage_Core_Helper_Abstract
      * @param $websiteId
      */
     public function joinPriceIndexLeft($collection, $websiteId)
-	{
-		$resource = Mage::getResourceSingleton('core/resource');
+    {
+        $resource = Mage::getResourceSingleton('core/resource');
         $tableName = array('price_index' => $resource->getTable('catalog/product_index_price'));
-	    $joinCond = join(' AND ', array(
+        $joinCond = join(
+            ' AND ', array(
             'price_index.entity_id = e.entity_id',
             'price_index.website_id = ' . $websiteId,
             'price_index.customer_group_id = 0'
-        ));
+            )
+        );
         $colls = array('final_price', 'min_price', 'max_price');
         $collection->getSelect()->joinLeft($tableName, $joinCond, $colls);
-	}
+    }
 
     /**
      * @param $selectedAttrs
@@ -229,7 +231,7 @@ class Magmodules_Channable_Model_Common extends Mage_Core_Helper_Abstract
 
             $attributeModel = Mage::getSingleton('eav/config')
                 ->getAttribute(Mage_Catalog_Model_Product::ENTITY, $attribute);
-            if (!$frontendInput = $attributeModel->getFrontendInput()) {
+            if (!$frontendInput = $attributeModel->getAttributeCode()) {
                 continue;
             }
 
@@ -375,7 +377,7 @@ class Magmodules_Channable_Model_Common extends Mage_Core_Helper_Abstract
                 Mage::getSingleton('cataloginventory/stock')->addInStockFilterToCollection($collection);
             }
 
-			$this->joinPriceIndexLeft($collection, $config['website_id']);
+            $this->joinPriceIndexLeft($collection, $config['website_id']);
             $collection->getSelect()->group('e.entity_id');
 
             if (!empty($config['filters'])) {
@@ -396,6 +398,8 @@ class Magmodules_Channable_Model_Common extends Mage_Core_Helper_Abstract
     public function getCollectionCountWithFilters($productCollection)
     {
         $selectCountSql = $productCollection->getSelectCountSql();
+        $selectCountSql->reset(Zend_Db_Select::GROUP); // FIX FOR MAGENTO 1.9.0.1
+
         $connection = Mage::getSingleton('core/resource')->getConnection('core_read');
         $count = $connection->fetchOne($selectCountSql);
         return $count;

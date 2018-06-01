@@ -41,7 +41,13 @@ $tokenEncrypted = Mage::getModel('core/config_data')->getCollection()
     ->getValue();
 
 if (empty($tokenEncrypted)) {
-    $encrypt = Mage::helper('core')->encrypt($token);
+    try {
+        $encrypt = Mage::helper('core')->encrypt($token);
+    } catch (Exception $e) {
+        Mage::log($e->getMessage(), 2, 'channable.log');
+        $encrypt = '';
+    }
+
     Mage::getModel('core/config')->saveConfig('channable/connect/token_encrypted', 1);
     Mage::getModel('core/config')->saveConfig('channable/connect/token', $encrypt);
 }

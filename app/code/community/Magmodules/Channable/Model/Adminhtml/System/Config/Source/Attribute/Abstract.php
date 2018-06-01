@@ -37,6 +37,11 @@ class Magmodules_Channable_Model_Adminhtml_System_Config_Source_Attribute_Abstra
         if (!$this->options) {
             $options[] = array('value' => '', 'label' => Mage::helper('channable')->__('-- None'));
             $options[] = $this->getAttributesArray();
+            $relations = $this->getRelations();
+            if (!empty($relations)) {
+                $options[] = $relations;
+            }
+
             $this->options = $options;
         }
 
@@ -66,7 +71,7 @@ class Magmodules_Channable_Model_Adminhtml_System_Config_Source_Attribute_Abstra
         usort(
             $optionArray, function ($a, $b) {
             return strcmp($a["label"], $b["label"]);
-        }
+            }
         );
 
         return array(
@@ -112,6 +117,32 @@ class Magmodules_Channable_Model_Adminhtml_System_Config_Source_Attribute_Abstra
             'value' => 'backorders'
         );
         return $optionArray;
+    }
+
+    /**
+     * @return array
+     */
+    public function getRelations()
+    {
+        $optionArray = array();
+        $optionArray[] = array(
+            'label' => Mage::helper('channable')->__('Related Skus'),
+            'value' => 'related_skus'
+        );
+        $optionArray[] = array(
+            'label' => Mage::helper('channable')->__('Upsell Skus'),
+            'value' => 'upsell_skus'
+        );
+        $optionArray[] = array(
+            'label' => Mage::helper('channable')->__('Crosssell Skus'),
+            'value' => 'crosssell_skus'
+        );
+
+        return array(
+            'label'         => Mage::helper('channable')->__('Product Relations'),
+            'value'         => $optionArray,
+            'optgroup-name' => Mage::helper('channable')->__('Product Relations')
+        );
     }
 
     /**

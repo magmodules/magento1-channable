@@ -58,6 +58,7 @@ class Magmodules_Channable_Adminhtml_ChannableController extends Mage_Adminhtml_
                     ->setUsedInProductListing(1)
                     ->save();
             }
+
             $msg = $this->helper->__('Attributes added to Flat Catalog, please reindex Product Flat Data.');
             $this->session->addSuccess($msg);
         } catch (\Exception $e) {
