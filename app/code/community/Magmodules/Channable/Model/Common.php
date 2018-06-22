@@ -202,6 +202,7 @@ class Magmodules_Channable_Model_Common extends Mage_Core_Helper_Abstract
      * @param                                                $type
      *
      * @return Mage_Catalog_Model_Resource_Product_Collection
+     * @throws Mage_Core_Exception
      */
     public function addFilters($filters, $collection, $type = 'simple')
     {
@@ -229,12 +230,15 @@ class Magmodules_Channable_Model_Common extends Mage_Core_Helper_Abstract
                 continue;
             }
 
-            $attributeModel = Mage::getSingleton('eav/config')
-                ->getAttribute(Mage_Catalog_Model_Product::ENTITY, $attribute);
-            if (!$frontendInput = $attributeModel->getAttributeCode()) {
+            $productEntity = Mage_Catalog_Model_Product::ENTITY;
+            /** @var Mage_Eav_Model_Config $eavConfig */
+            $eavConfig = Mage::getSingleton('eav/config');
+            $attributeModel = $eavConfig->getAttribute($productEntity, $attribute);
+            if (!$attributeModel->getAttributeCode()) {
                 continue;
             }
 
+            $frontendInput = $attributeModel->getFrontendInput();
             if ($frontendInput == 'select' || $frontendInput == 'multiselect') {
                 $options = $attributeModel->getSource()->getAllOptions();
                 if (strpos($value, ',') !== false) {
