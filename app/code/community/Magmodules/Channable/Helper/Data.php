@@ -871,8 +871,13 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
         $value = '';
         switch ($type) {
             case 'price':
-                if (!empty($product[$source])) {
-                    $value = $this->formatPrice($product[$source], $config);
+                if (isset($product[$source])) {
+                    if ($source == 'msrp') {
+                        $price = $this->processPrice($product, $product[$source], $config);
+                    } else {
+                        $price = $product[$source];
+                    }
+                    $value = $this->formatPrice($price, $config);
                 }
                 break;
             case 'select':
