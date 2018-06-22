@@ -872,10 +872,7 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
         switch ($type) {
             case 'price':
                 if (!empty($product[$source])) {
-                    $value = number_format($product[$source], 2, '.', '');
-                    if (!empty($config['currency'])) {
-                        $value .= ' ' . $config['currency'];
-                    }
+                    $value = $this->formatPrice($product[$source], $config);
                 }
                 break;
             case 'select':
