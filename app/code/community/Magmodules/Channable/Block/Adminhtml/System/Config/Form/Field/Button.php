@@ -60,6 +60,40 @@ class Magmodules_Channable_Block_Adminhtml_System_Config_Form_Field_Button
     }
 
     /**
+     * @return string
+     */
+    public function getFlatcheck()
+    {
+        /** @var Magmodules_Channable_Model_Channable $model */
+        $model = Mage::getModel("channable/channable");
+
+        /** @var Magmodules_Channable_Helper_Data $helper */
+        $helper = Mage::helper("channable");
+
+        try {
+            $flatProduct = Mage::getStoreConfig('catalog/frontend/flat_catalog_product');
+            $bypassFlat = Mage::getStoreConfig('channable_connect/generate/bypass_flat');
+
+            if ($flatProduct && !$bypassFlat) {
+                $storeId = $helper->getStoreIdConfig();
+                $nonFlatAttributes = $helper->checkFlatCatalog($model->getFeedAttributes($storeId, 'flatcheck'));
+                if (!empty($nonFlatAttributes)) {
+                    return sprintf(
+                        '<span class="channable-flat" %s>%s</span>',
+                        'onclick="javascript:testModule(); return false;"',
+                        $helper->__('Possible data issue(s) found!')
+                    );
+                }
+            }
+        } catch (\Exception $e) {
+            $helper->addToLog('checkFlat', $e->getMessage());
+        }
+
+        return null;
+    }
+
+    
+    /**
      * Generate button html
      *
      * @return string

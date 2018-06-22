@@ -175,6 +175,7 @@ class Magmodules_Channable_Model_Channable extends Magmodules_Channable_Model_Co
         $config['force_tax'] = $this->helper->getConfigData('data/force_tax', $storeId);
         $config['currency'] = $store->getDefaultCurrencyCode();
         $config['base_currency_code'] = $store->getBaseCurrencyCode();
+        $config['use_currency'] = true;
         $config['markup'] = $this->helper->getPriceMarkup($config);
         $config['use_tax'] = $this->helper->getTaxUsage($config);
         $config['skip_validation'] = false;
