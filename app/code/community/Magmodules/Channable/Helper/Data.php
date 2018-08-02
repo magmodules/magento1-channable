@@ -459,7 +459,7 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
                     }
                 );
                 foreach ($gallery as $galImage) {
-                    if ($galImage['disabled'] == 0) {
+                    if ($galImage['disabled'] == 0 && $galImage['disabled_default'] == 0) {
                         $imageData['image']['all']['image_' . $i] = $this->checkImagePath(
                             $galImage['file'],
                             $config['media_image_url']
@@ -478,7 +478,6 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
                         $i++;
                     }
                 }
-
                 return $imageData;
             } else {
                 if (!empty($imageData['image']['image'])) {
