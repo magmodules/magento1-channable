@@ -619,7 +619,7 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
             case 'bundle':
                 if ($product->getPriceType() == '1') {
                     $price = $this->processPrice($product, $product->getPrice(), $config);
-                    $finalPrice = $this->processPrice($product, $product->getFinalPrice(), $config);;
+                    $finalPrice = $this->processPrice($product, $product->getFinalPrice(), $config);
                     $minPrice = $this->processPrice($product, $product->getData('min_price'), $config);
                     $maxPrice = $this->processPrice($product, $product->getData('max_price'), $config);
 
@@ -652,13 +652,23 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
                 break;
             default:
                 $price = $this->processPrice($product, $product->getPrice(), $config);
-                $finalPrice = $this->processPrice($product, $product->getFinalPrice(), $config);;
+                $finalPrice = $this->processPrice($product, $product->getFinalPrice(), $config);
+                $specialPrice = $this->processPrice($product, $product->getSpecialPrice(), $config);
                 $minPrice = $this->processPrice($product, $product->getData('min_price'), $config);
                 $maxPrice = $this->processPrice($product, $product->getData('max_price'), $config);
+
+                if ($specialPrice > 0 && $specialPrice < $finalPrice) {
+                    $finalPrice = $specialPrice;
+                }
+
+                if ($finalPrice < $minPrice) {
+                    $minPrice = $finalPrice;
+                }
 
                 if ((floatval($price) == 0) && (floatval($minPrice) !== 0)) {
                     $price = $minPrice;
                 }
+
                 break;
         }
 
@@ -689,6 +699,7 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
                 }
             }
 
+            $priceData['final_price_clean'] = $finalPrice;
             $priceData['sales_price'] = $this->formatPrice($finalPrice, $config);
         }
 
