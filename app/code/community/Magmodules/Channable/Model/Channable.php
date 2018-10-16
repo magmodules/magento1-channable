@@ -319,7 +319,7 @@ class Magmodules_Channable_Model_Channable extends Magmodules_Channable_Model_Co
             }
         }
 
-        if ($extraFields = @unserialize($this->helper->getConfigData('advanced/extra', $storeId))) {
+        if ($extraFields = $this->helper->getSerializedConfigData('advanced/extra', $storeId)) {
             $i = 1;
             foreach ($extraFields as $extraField) {
                 $attributes['extra-' . $i] = array(
@@ -328,6 +328,20 @@ class Magmodules_Channable_Model_Channable extends Magmodules_Channable_Model_Co
                     'action' => ''
                 );
                 $i++;
+            }
+        }
+
+        if ($type == 'selftest') {
+            if($filters = $this->helper->getSerializedConfigData('filter/advanced', $storeId)) {
+                $i = 1;
+                foreach ($filters as $filter) {
+                    $attributes['filter-' . $i] = array(
+                        'label'  => $filter['attribute'],
+                        'source' => $filter['attribute'],
+                        'action' => ''
+                    );
+                    $i++;
+                }
             }
         }
 

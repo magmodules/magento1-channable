@@ -354,11 +354,13 @@ class Magmodules_Channable_Model_Common extends Mage_Core_Helper_Abstract
 
         return $attributes;
     }
+
     /**
      * @param array $parentRelations
      * @param array $config
      *
      * @return Mage_Catalog_Model_Resource_Product_Collection
+     * @throws Mage_Core_Exception
      */
     public function getParents($parentRelations, $config)
     {

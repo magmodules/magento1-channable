@@ -1088,8 +1088,10 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         $skus = array();
+        /** @var Mage_Catalog_Model_Resource_Eav_Mysql4_Product $resource */
+        $resource = Mage::getSingleton('catalog/product')->getResource();
         foreach ($products as $product) {
-            $skus[] = $product->getSku();
+            $skus[] = $resource->getAttributeRawValue($product->getId(),'sku',0);
         }
 
         return implode(',', $skus);

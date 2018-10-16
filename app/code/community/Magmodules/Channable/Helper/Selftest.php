@@ -1,4 +1,4 @@
-<?php
+runTests<?php
 /**
  * Magmodules.eu - http://www.magmodules.eu
  *
@@ -65,7 +65,7 @@ class Magmodules_Channable_Helper_Selftest extends Magmodules_Channable_Helper_D
                 $result[] = $this->getPass('Catalog Product Flat is enabled');
 
                 $storeId = $this->getStoreIdConfig();
-                $nonFlatAttributes = $this->checkFlatCatalog($model->getFeedAttributes('', $storeId));
+                $nonFlatAttributes = $this->checkFlatCatalog($model->getFeedAttributes($storeId, 'selftest'));
 
                 if (!empty($nonFlatAttributes)) {
                     $atts = '<i>' . implode($nonFlatAttributes, ', ') . '</i>';
