@@ -1,4 +1,4 @@
-runTests<?php
+<?php
 /**
  * Magmodules.eu - http://www.magmodules.eu
  *
