@@ -198,7 +198,7 @@ class Magmodules_Channable_Model_Adminhtml_System_Config_Source_Attribute_Abstra
      */
     public function getBackendTypes()
     {
-        return array('text', 'select', 'textarea', 'date', 'int', 'boolean', 'static', 'varchar', 'decimal');
+        return array('text', 'select', 'textarea', 'date', 'datetime', 'int', 'boolean', 'static', 'varchar', 'decimal');
     }
 
     /**

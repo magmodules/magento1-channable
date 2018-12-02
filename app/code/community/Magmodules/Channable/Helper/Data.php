@@ -653,13 +653,8 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
             default:
                 $price = $this->processPrice($product, $product->getPrice(), $config);
                 $finalPrice = $this->processPrice($product, $product->getFinalPrice(), $config);
-                $specialPrice = $this->processPrice($product, $product->getSpecialPrice(), $config);
                 $minPrice = $this->processPrice($product, $product->getData('min_price'), $config);
                 $maxPrice = $this->processPrice($product, $product->getData('max_price'), $config);
-
-                if ($specialPrice > 0 && $specialPrice < $finalPrice) {
-                    $finalPrice = $specialPrice;
-                }
 
                 if ($finalPrice < $minPrice) {
                     $minPrice = $finalPrice;
