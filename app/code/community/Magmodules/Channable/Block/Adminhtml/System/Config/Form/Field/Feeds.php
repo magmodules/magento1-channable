@@ -48,7 +48,7 @@ class Magmodules_Channable_Block_Adminhtml_System_Config_Form_Field_Feeds
                 );
 
                 $sHtml .= sprintf(
-                    '<tr><td>%s</td><td>%s</td><td><a href="%s">%s</a></td><td><a href="%s" target="_blank">%s</a></td></tr>',
+                    '<tr><td>%s</td><td>%s</td><td><a href="%s" target="_blank">%s</a></td><td><a href="%s" target="_blank">%s</a></td></tr>',
                     $store->getWebsite()->getName(),
                     $store->getName(),
                     $baseUrl . 'channable/feed/get/code/' . $token . '/store/' . $storeId . '/array/1',
