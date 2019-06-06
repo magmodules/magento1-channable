@@ -1513,8 +1513,8 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
                             }
                         }
 
-                        $typePrices[$parentId . '_' . $sProduct->getEntityId()] = $this->formatPrice(($totalPrice * $config['markup']), $config);
-                        $typePrices[$parentId . '_' . $sProduct->getEntityId() . '_reg'] = $this->formatPrice(($totalPriceReg * $config['markup']), $config);
+                        $typePrices[$parentId . '_' . $sProduct->getEntityId()] = $totalPrice * $config['markup'];
+                        $typePrices[$parentId . '_' . $sProduct->getEntityId() . '_reg'] = $totalPriceReg * $config['markup'];
                     }
                 }
             }
