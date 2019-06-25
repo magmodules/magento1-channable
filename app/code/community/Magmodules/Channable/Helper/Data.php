@@ -887,7 +887,7 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
                 break;
             case 'select':
                 if (!empty($source)) {
-                    $value = $product->getAttributeText($source);
+                    $value = (string)$product->getAttributeText($source);
                 }
                 break;
             case 'multiselect':
