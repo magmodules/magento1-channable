@@ -68,8 +68,9 @@ class Magmodules_Channable_Model_Adminhtml_System_Config_Backend_Design_Filter
      */
     function orderData($data, $sort)
     {
-        $code = "return strnatcmp(\$a['$sort'], \$b['$sort']);";
-        usort($data, create_function('$a,$b', $code));
+        usort($data, function ($a, $b) use ($sort) {
+            return strnatcmp($a[$sort], $b[$sort]);
+        });
 
         return $data;
     }

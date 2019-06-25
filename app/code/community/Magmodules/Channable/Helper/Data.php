@@ -1045,8 +1045,9 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getSortedArray($data, $sort)
     {
-        $code = "return strnatcmp(\$a['$sort'], \$b['$sort']);";
-        usort($data, create_function('$a,$b', $code));
+        usort($data, function ($a, $b) use ($sort) {
+            return strnatcmp($a[$sort], $b[$sort]);
+        });
 
         return array_reverse($data);
     }
