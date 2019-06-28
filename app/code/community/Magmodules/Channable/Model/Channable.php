@@ -368,41 +368,40 @@ class Magmodules_Channable_Model_Channable extends Magmodules_Channable_Model_Co
 
         foreach ($products as $product) {
             $parent = null;
-            if (!empty($parentRelations[$product->getEntityId()])) {
-                foreach ($parentRelations[$product->getEntityId()] as $parentId) {
+            $parents = $parentRelations[$product->getEntityId()];
+            if (!empty($parents)) {
+                foreach ($parents as $parentId) {
                     if ($parent = $parents->getItemById($parentId)) {
-                        continue;
+
+                        $productData = $this->helper->getProductDataRow($product, $config, $parent, $parentAttributes);
+                        if ($productData) {
+                            $productRow = array();
+                            foreach ($productData as $key => $value) {
+                                if (!is_array($value)) {
+                                    $productRow[$key] = $value;
+                                }
+                            }
+
+                            if ($extraData = $this->getExtraDataFields($productData, $config, $product, $prices)) {
+                                $productRow = array_merge($productRow, $extraData);
+                            }
+
+                            $productRow = new Varien_Object($productRow);
+                            $productRow = $productRow->getData();
+
+                            $feed[] = $productRow;
+                            if ($config['item_updates']) {
+                                $this->processItemUpdates($productRow, $config['store_id']);
+                            }
+
+                            unset($productRow);
+                        }
+
                     }
                 }
             }
 
-            $productData = $this->helper->getProductDataRow($product, $config, $parent, $parentAttributes);
-            if ($productData) {
-                $productRow = array();
-                foreach ($productData as $key => $value) {
-                    if (!is_array($value)) {
-                        $productRow[$key] = $value;
-                    }
-                }
 
-                if ($extraData = $this->getExtraDataFields($productData, $config, $product, $prices)) {
-                    $productRow = array_merge($productRow, $extraData);
-                }
-
-                $productRow = new Varien_Object($productRow);
-                Mage::dispatchEvent(
-                    'channable_feed_item_before',
-                    array('feed_data' => $productRow, 'product' => $product)
-                );
-                $productRow = $productRow->getData();
-
-                $feed[] = $productRow;
-                if ($config['item_updates']) {
-                    $this->processItemUpdates($productRow, $config['store_id']);
-                }
-
-                unset($productRow);
-            }
         }
 
         return $feed;
