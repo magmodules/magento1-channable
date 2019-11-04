@@ -152,6 +152,7 @@ class Magmodules_Channable_Model_Channable extends Magmodules_Channable_Model_Co
         $config['conf_fields'] = $this->helper->getConfigData('data/conf_fields', $storeId);
         $config['stock_bundle'] = $this->helper->getConfigData('data/stock_bundle', $storeId);
         $config['conf_switch_urls'] = $this->helper->getConfigData('data/conf_switch_urls', $storeId);
+        $config['price_grouped'] = $this->helper->getConfigData('data/grouped_price', $storeId);
         $config['simple_price'] = $this->helper->getConfigData('data/simple_price', $storeId);
         $config['stock_manage'] = Mage::getStoreConfig('cataloginventory/item_options/manage_stock');
         $config['use_qty_increments'] = Mage::getStoreConfig('cataloginventory/item_options/enable_qty_increments');

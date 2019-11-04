@@ -614,6 +614,7 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
                 if ($groupedPriceType == 'total') {
                     $price = $totalPrice;
                     $finalPrice = $totalPrice;
+                    $maxPrice = max($finalPrice, $maxPrice);
                 }
                 break;
             case 'bundle':
