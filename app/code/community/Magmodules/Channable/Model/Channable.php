@@ -199,12 +199,15 @@ class Magmodules_Channable_Model_Channable extends Magmodules_Channable_Model_Co
         $config['field'] = $this->getFeedAttributes($storeId, $type, $config);
         $config['parent_att'] = $this->getParentAttributeSelection($config['field']);
 
-        foreach ($config['shipping_prices'] as &$shipping_price) {
-            if ($config['shipping_method'] !== 'weight') {
-                $shipping_price['price_from'] = $this->convertToCurrency($shipping_price['price_from'], $config['base_currency_code'], $config['currency']);
-                $shipping_price['price_to'] = $this->convertToCurrency($shipping_price['price_to'], $config['base_currency_code'], $config['currency']);
+        // Convert prices form base currency to default currency
+        if ($this->helper->getConfigData('advanced/shipping_convert_prices', $storeId)) {
+            foreach ($config['shipping_prices'] as &$shipping_price) {
+                if ($config['shipping_method'] !== 'weight') {
+                    $shipping_price['price_from'] = $this->convertToCurrency($shipping_price['price_from'], $config['base_currency_code'], $config['currency']);
+                    $shipping_price['price_to'] = $this->convertToCurrency($shipping_price['price_to'], $config['base_currency_code'], $config['currency']);
+                }
+                $shipping_price['cost'] = $this->convertToCurrency($shipping_price['cost'], $config['base_currency_code'], $config['currency']);
             }
-            $shipping_price['cost'] = $this->convertToCurrency($shipping_price['cost'], $config['base_currency_code'], $config['currency']);
         }
 
         return $config;
