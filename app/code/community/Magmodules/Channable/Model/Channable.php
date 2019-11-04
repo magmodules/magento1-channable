@@ -199,7 +199,27 @@ class Magmodules_Channable_Model_Channable extends Magmodules_Channable_Model_Co
         $config['field'] = $this->getFeedAttributes($storeId, $type, $config);
         $config['parent_att'] = $this->getParentAttributeSelection($config['field']);
 
+        foreach ($config['shipping_prices'] as &$shipping_price) {
+            if ($config['shipping_method'] !== 'weight') {
+                $shipping_price['price_from'] = $this->convertToCurrency($shipping_price['price_from'], $config['base_currency_code'], $config['currency']);
+                $shipping_price['price_to'] = $this->convertToCurrency($shipping_price['price_to'], $config['base_currency_code'], $config['currency']);
+            }
+            $shipping_price['cost'] = $this->convertToCurrency($shipping_price['cost'], $config['base_currency_code'], $config['currency']);
+        }
+
         return $config;
+    }
+
+    /**
+     * @param string|float $price
+     * @param string $baseCurrency
+     * @param string $currency
+     *
+     * @return float
+     */
+    private function convertToCurrency($price, $baseCurrency, $currency)
+    {
+        return Mage::helper('directory')->currencyConvert($price, $baseCurrency, $currency);
     }
 
     /**
