@@ -120,6 +120,9 @@
                 <stock>1</stock>
                 <configurable_link>1</configurable_link>
             </data>
+            <advanced>
+                <shipping_convert_prices>0</shipping_convert_prices>
+            </advanced>
             <server>
                 <memory_limit>1024M</memory_limit>
                 <max_execution_time>300</max_execution_time>
