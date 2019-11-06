@@ -151,6 +151,7 @@ class Magmodules_Channable_Model_Channable extends Magmodules_Channable_Model_Co
         $config['conf_enabled'] = $this->helper->getConfigData('data/conf_enabled', $storeId);
         $config['conf_fields'] = $this->helper->getConfigData('data/conf_fields', $storeId);
         $config['stock_bundle'] = $this->helper->getConfigData('data/stock_bundle', $storeId);
+        $config['configurable_link'] = $this->helper->getConfigData('data/configurable_link', $storeId);
         $config['conf_switch_urls'] = $this->helper->getConfigData('data/conf_switch_urls', $storeId);
         $config['price_grouped'] = $this->helper->getConfigData('data/grouped_price', $storeId);
         $config['simple_price'] = $this->helper->getConfigData('data/simple_price', $storeId);

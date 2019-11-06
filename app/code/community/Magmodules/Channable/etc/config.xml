@@ -118,6 +118,7 @@
                 <delivery_out>1-7 Days</delivery_out>
                 <stock_status>1</stock_status>
                 <stock>1</stock>
+                <configurable_link>1</configurable_link>
             </data>
             <server>
                 <memory_limit>1024M</memory_limit>

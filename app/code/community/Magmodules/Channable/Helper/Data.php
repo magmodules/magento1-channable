@@ -331,6 +331,8 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     public function getProductUrl($product, $config, $parent, $parentAttributes)
     {
         $url = '';
+        $parent = !empty($config['field']['product_url']['parent']) ? $parent : null;
+
         if (!empty($parent)) {
             if ($parent->getRequestPath()) {
                 $url = Mage::helper('core')->escapeHtml(trim($config['website_url'] . $parent->getRequestPath()));
@@ -1241,6 +1243,16 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function addAttributeData($attributes, $config = array())
     {
+        $confAttributes = array();
+        if (!empty($config['conf_enabled'])) {
+            if (!empty($config['conf_fields'])) {
+                $confAttributes = explode(',', $config['conf_fields']);
+            }
+            if (!empty($config['configurable_link'])) {
+                $confAttributes[] = 'product_url';
+            }
+        }
+
         foreach ($attributes as $key => $attribute) {
             $type = (!empty($attribute['type']) ? $attribute['type'] : '');
             $action = (!empty($attribute['action']) ? $attribute['action'] : '');
@@ -1261,11 +1273,8 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
                 $type = 'float';
             }
 
-            if (!empty($config['conf_fields'])) {
-                $confAttributes = explode(',', $config['conf_fields']);
-                if (in_array($key, $confAttributes)) {
-                    $parent = '1';
-                }
+            if (in_array($key, $confAttributes)) {
+                $parent = '1';
             }
 
             $attributes[$key] = array(
