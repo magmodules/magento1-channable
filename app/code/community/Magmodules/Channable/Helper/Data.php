@@ -711,18 +711,21 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     public function getGroupedPrices($product, $config)
     {
         $prices = array();
+        $totalPrice = 0;
+
         $_associatedProducts = $product->getTypeInstance(true)->getAssociatedProducts($product);
         foreach ($_associatedProducts as $_item) {
             $priceAssociated = $this->processPrice($_item, $_item->getFinalPrice(), $config);
             if ($priceAssociated > 0) {
                 $prices[] = $priceAssociated;
+                $totalPrice += $priceAssociated * $_item->getQty();
             }
         }
 
         return array(
             'min_price'   => min($prices),
             'max_price'   => max($prices),
-            'total_price' => array_sum($prices)
+            'total_price' => $totalPrice > 0 ? $totalPrice : min($prices)
         );
     }
 
