@@ -151,7 +151,9 @@ class Magmodules_Channable_Model_Channable extends Magmodules_Channable_Model_Co
         $config['conf_enabled'] = $this->helper->getConfigData('data/conf_enabled', $storeId);
         $config['conf_fields'] = $this->helper->getConfigData('data/conf_fields', $storeId);
         $config['stock_bundle'] = $this->helper->getConfigData('data/stock_bundle', $storeId);
+        $config['configurable_link'] = $this->helper->getConfigData('data/configurable_link', $storeId);
         $config['conf_switch_urls'] = $this->helper->getConfigData('data/conf_switch_urls', $storeId);
+        $config['price_grouped'] = $this->helper->getConfigData('data/grouped_price', $storeId);
         $config['simple_price'] = $this->helper->getConfigData('data/simple_price', $storeId);
         $config['stock_manage'] = Mage::getStoreConfig('cataloginventory/item_options/manage_stock');
         $config['use_qty_increments'] = Mage::getStoreConfig('cataloginventory/item_options/enable_qty_increments');
@@ -199,7 +201,30 @@ class Magmodules_Channable_Model_Channable extends Magmodules_Channable_Model_Co
         $config['field'] = $this->getFeedAttributes($storeId, $type, $config);
         $config['parent_att'] = $this->getParentAttributeSelection($config['field']);
 
+        // Convert prices form base currency to default currency
+        if ($this->helper->getConfigData('advanced/shipping_convert_prices', $storeId)) {
+            foreach ($config['shipping_prices'] as &$shipping_price) {
+                if ($config['shipping_method'] !== 'weight') {
+                    $shipping_price['price_from'] = $this->convertToCurrency($shipping_price['price_from'], $config['base_currency_code'], $config['currency']);
+                    $shipping_price['price_to'] = $this->convertToCurrency($shipping_price['price_to'], $config['base_currency_code'], $config['currency']);
+                }
+                $shipping_price['cost'] = $this->convertToCurrency($shipping_price['cost'], $config['base_currency_code'], $config['currency']);
+            }
+        }
+
         return $config;
+    }
+
+    /**
+     * @param string|float $price
+     * @param string $baseCurrency
+     * @param string $currency
+     *
+     * @return float
+     */
+    private function convertToCurrency($price, $baseCurrency, $currency)
+    {
+        return Mage::helper('directory')->currencyConvert($price, $baseCurrency, $currency);
     }
 
     /**

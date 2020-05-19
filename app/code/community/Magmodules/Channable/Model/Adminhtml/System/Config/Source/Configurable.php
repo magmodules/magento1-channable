@@ -37,7 +37,7 @@ class Magmodules_Channable_Model_Adminhtml_System_Config_Source_Configurable
         if (!$this->options) {
             $storeId = Mage::helper('channable')->getStoreIdConfig();
             $attributes = Mage::getModel("channable/channable")->getFeedAttributes($storeId, 'config');
-            $attributesSkip = array('id', 'parent_id', 'price', 'availability', 'is_in_stock', 'qty', 'status', 'visibility');
+            $attributesSkip = $this->_getSkippedAttributes();
             $att = array();
             foreach ($attributes as $key => $attribute) {
                 if (!in_array($key, $attributesSkip) && !empty($key)) {
@@ -51,4 +51,23 @@ class Magmodules_Channable_Model_Adminhtml_System_Config_Source_Configurable
 
         return $this->options;
     }
+
+    /**
+     * @return array
+     */
+    protected function _getSkippedAttributes()
+    {
+        return array(
+            'id',
+            'parent_id',
+            'price',
+            'availability',
+            'is_in_stock',
+            'qty',
+            'status',
+            'visibility',
+            'product_url'
+        );
+    }
+
 }

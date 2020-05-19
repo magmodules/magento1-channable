@@ -21,7 +21,7 @@
 <config>
     <modules>
         <Magmodules_Channable>
-            <version>1.6.12</version>
+            <version>1.6.13</version>
         </Magmodules_Channable>
     </modules>
     <global>
@@ -118,7 +118,11 @@
                 <delivery_out>1-7 Days</delivery_out>
                 <stock_status>1</stock_status>
                 <stock>1</stock>
+                <configurable_link>1</configurable_link>
             </data>
+            <advanced>
+                <shipping_convert_prices>0</shipping_convert_prices>
+            </advanced>
             <server>
                 <memory_limit>1024M</memory_limit>
                 <max_execution_time>300</max_execution_time>

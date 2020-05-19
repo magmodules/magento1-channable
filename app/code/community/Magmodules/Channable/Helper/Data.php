@@ -331,6 +331,8 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     public function getProductUrl($product, $config, $parent, $parentAttributes)
     {
         $url = '';
+        $parent = !empty($config['field']['product_url']['parent']) ? $parent : null;
+
         if (!empty($parent)) {
             if ($parent->getRequestPath()) {
                 $url = Mage::helper('core')->escapeHtml(trim($config['website_url'] . $parent->getRequestPath()));
@@ -614,6 +616,7 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
                 if ($groupedPriceType == 'total') {
                     $price = $totalPrice;
                     $finalPrice = $totalPrice;
+                    $maxPrice = max($finalPrice, $maxPrice);
                 }
                 break;
             case 'bundle':
@@ -710,18 +713,21 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
     public function getGroupedPrices($product, $config)
     {
         $prices = array();
+        $totalPrice = 0;
+
         $_associatedProducts = $product->getTypeInstance(true)->getAssociatedProducts($product);
         foreach ($_associatedProducts as $_item) {
             $priceAssociated = $this->processPrice($_item, $_item->getFinalPrice(), $config);
             if ($priceAssociated > 0) {
                 $prices[] = $priceAssociated;
+                $totalPrice += $priceAssociated * $_item->getQty();
             }
         }
 
         return array(
             'min_price'   => min($prices),
             'max_price'   => max($prices),
-            'total_price' => array_sum($prices)
+            'total_price' => $totalPrice > 0 ? $totalPrice : min($prices)
         );
     }
 
@@ -1237,6 +1243,16 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function addAttributeData($attributes, $config = array())
     {
+        $confAttributes = array();
+        if (!empty($config['conf_enabled'])) {
+            if (!empty($config['conf_fields'])) {
+                $confAttributes = explode(',', $config['conf_fields']);
+            }
+            if (!empty($config['configurable_link'])) {
+                $confAttributes[] = 'product_url';
+            }
+        }
+
         foreach ($attributes as $key => $attribute) {
             $type = (!empty($attribute['type']) ? $attribute['type'] : '');
             $action = (!empty($attribute['action']) ? $attribute['action'] : '');
@@ -1257,11 +1273,8 @@ class Magmodules_Channable_Helper_Data extends Mage_Core_Helper_Abstract
                 $type = 'float';
             }
 
-            if (!empty($config['conf_fields'])) {
-                $confAttributes = explode(',', $config['conf_fields']);
-                if (in_array($key, $confAttributes)) {
-                    $parent = '1';
-                }
+            if (in_array($key, $confAttributes)) {
+                $parent = '1';
             }
 
             $attributes[$key] = array(
